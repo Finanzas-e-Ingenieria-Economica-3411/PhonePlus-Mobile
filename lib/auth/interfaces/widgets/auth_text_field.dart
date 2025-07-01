@@ -42,7 +42,7 @@ class _AuthTextFieldState extends State<AuthTextField> {
         ),
         filled: true,
         fillColor: background,
-        errorStyle: const TextStyle(fontSize: 10.0),
+        errorStyle: const TextStyle(fontSize: 10.0, color: Colors.red),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10.0),
           borderSide: const BorderSide(

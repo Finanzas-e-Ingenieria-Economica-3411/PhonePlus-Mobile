@@ -7,11 +7,11 @@ import '../helpers/storage_helper.dart';
 import '../utils/serializable.dart';
 
 abstract class BaseService<TRequest extends Serializable>{
-  final Dio _dio;
+  final  Dio _dio;
   final Logger logger = getIt<Logger>();
   final String token ="";
-  final String resourcePath;
-  get dio => _dio;
+  String resourcePath;
+  Dio get dio => _dio;
 
   BaseService({
     required this.resourcePath,
@@ -50,7 +50,7 @@ abstract class BaseService<TRequest extends Serializable>{
     }
   }
 
-  Future<bool> post(TRequest request) async {
+  Future<dynamic> post(TRequest request) async {
     try{
       final token = await getToken();
       Options options = Options(
@@ -58,8 +58,8 @@ abstract class BaseService<TRequest extends Serializable>{
           'Authorization': 'Bearer $token',
         },
       );
-      await _dio.post(Constant.baseUrl + resourcePath, data: request.toRequest(), options: options);
-      return true;
+      final response = await _dio.post(Constant.baseUrl + resourcePath, data: request.toRequest(), options: options);
+      return response.data;
     } on DioException catch (e){
       final statusCode = e.response?.statusCode;
       logger.log(

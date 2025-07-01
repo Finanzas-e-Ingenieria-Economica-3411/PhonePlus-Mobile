@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:phoneplus/auth/interfaces/providers/auth_provider.dart';
 import 'package:phoneplus/auth/interfaces/screens/login_screen.dart';
+import 'package:phoneplus/shared/interfaces/widgets/custom_dialog.dart';
+import 'package:provider/provider.dart';
 
 import '../../../shared/interfaces/widgets/custom_button.dart';
 import '../../../ui/constants/constant.dart';
@@ -20,6 +23,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   late TextEditingController firstNameController;
   late TextEditingController lastNameController;
   late TextEditingController dniController;
+  late TextEditingController userController;
+  bool isSeller = false;
 
   @override
   void initState(){
@@ -30,6 +35,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     firstNameController = TextEditingController();
     lastNameController = TextEditingController();
     dniController = TextEditingController();
+    userController = TextEditingController();
   }
 
   @override
@@ -41,9 +47,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
     firstNameController.dispose();
     lastNameController.dispose();
     dniController.dispose();
+    userController.dispose();
   }
   @override
   Widget build(BuildContext context) {
+    final authProvider = context.watch<AuthProvider>();
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -112,6 +120,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       AuthTextField(
                         controller: emailController,
                         hintText: 'Ingrese su correo',
+                        label: 'Email',
+                        onValidate: (String? value) {
+
+                        },
+                        isPassword: false,
+                      ),
+                      AuthTextField(
+                        controller: userController,
+                        hintText: 'Ingrese su usuario',
                         label: 'Usuario',
                         onValidate: (String? value) {
 
@@ -127,6 +144,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         },
                         isPassword: true,
                       ),
+                      Row(
+                        children: [
+                          Text(
+                              "Soy vendedor",
+                            style: TextStyle(
+                              color: text,
+                              fontSize: 17
+                            ),
+                          ),
+                          Checkbox(
+                              value: isSeller,
+                              onChanged: (_){
+                                setState(() {
+                                  isSeller = !isSeller;
+                                });
+                              }
+                          ),
+                        ],
+                      ),
                       AuthTextField(
                         controller: repeatPasswordController,
                         hintText: 'Ingrese denuevo su contraseña',
@@ -141,8 +177,50 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         children: [
                           CustomButton(
                             label: "Registrate",
-                            onPressed:(){
-
+                            onPressed:() async{
+                              try{
+                                authProvider.signUp(
+                                    emailController.text,
+                                    passwordController.text,
+                                    "${firstNameController.text} ${lastNameController.text}",
+                                    userController.text,
+                                    dniController.text,
+                                    isSeller ? 3 : 2
+                                );
+                                await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context){
+                                      return CustomDialog(
+                                          title: "Registro Exitoso!",
+                                          content: "Se ha registrado exitosamente su usuario, por favor revise su bandeja para confirmar su correo",
+                                          isSuccess: true,
+                                          onConfirm: (){
+                                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+                                          },
+                                          onCancel: (){
+                                            Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LoginScreen()));
+                                          },
+                                      );
+                                    }
+                                );
+                              } catch (_){
+                                await showDialog(
+                                    context: context,
+                                    builder: (BuildContext context){
+                                      return CustomDialog(
+                                        title: "Ocurrió un error!",
+                                        content: "Ocurrió un error al registrar su usuario, por favor revise sus datos e intentelo más tarde",
+                                        isSuccess: false,
+                                        onConfirm: (){
+                                          Navigator.pop(context);
+                                        },
+                                        onCancel: (){
+                                          Navigator.pop(context);
+                                        },
+                                      );
+                                    }
+                                );
+                              }
                             },
                             isStrong: true,
                           ),

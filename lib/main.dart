@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:phoneplus/auth/interfaces/providers/auth_provider.dart';
 import 'package:phoneplus/shared/interfaces/it/locators/logger_locator.dart';
 import 'package:phoneplus/shared/interfaces/screens/home_screen.dart';
 import 'package:phoneplus/ui/theme/theme.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   setUpLoggerLocator();
@@ -13,10 +15,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: AppTheme.appTheme,
-      home: const HomeScreen()
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AuthProvider())
+      ],
+      child: MaterialApp(
+        title: 'Flutter Demo',
+        theme: AppTheme.appTheme,
+        home: const HomeScreen()
+      ),
     );
   }
 }
