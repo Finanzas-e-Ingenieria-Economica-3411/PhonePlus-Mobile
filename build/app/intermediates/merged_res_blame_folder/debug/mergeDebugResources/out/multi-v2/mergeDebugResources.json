@@ -3458,25 +3458,6 @@
                     }
                 },
                 {
-                    "source": "/Users/lordmathi2741/Documents/Cursos/Finanzas/PhonePlus-Mobile/android/app/src/main/res/values/styles.xml",
-                    "from": {
-                        "startLines": "3,14",
-                        "startColumns": "4,4",
-                        "startOffsets": "173,818",
-                        "endLines": "7,16",
-                        "endColumns": "12,12",
-                        "endOffsets": "476,982"
-                    },
-                    "to": {
-                        "startLines": "1488,1492",
-                        "startColumns": "4,4",
-                        "startOffsets": "93582,93763",
-                        "endLines": "1491,1494",
-                        "endColumns": "12,12",
-                        "endOffsets": "93758,93927"
-                    }
-                },
-                {
                     "source": "/Users/lordmathi2741/.gradle/caches/8.10.2/transforms/1b91be3af319ede480d7185430690ee1/transformed/lifecycle-viewmodel-2.7.0/res/values/values.xml",
                     "from": {
                         "startLines": "2",
@@ -3510,6 +3491,25 @@
                         "endLines": "63,110,246,247,248,249,250,251,252,309,310,311,350,351,388,389,390,393,396,397,398,1487,1657,1663,1669,1672,1678,1682,1685,1692,1698,1701,1707,1712,1717,1724,1726,1732,1738,1746,1751,1758,1763,1769,1773,1780,1784,1790,1796,1799,1803,1804,1805,2722,2743,2891,2913,3061,3234,3308,3318,3328,3335,3341,3384,3458,3612,3629",
                         "endColumns": "72,68,63,54,67,66,64,56,56,47,47,60,62,62,37,56,43,13,138,49,47,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,12,46,55,24,24,24,24,24,24,24,24,24,24,24,24,24,24,24",
                         "endOffsets": "2268,5521,14939,14994,15062,15129,15194,15251,15308,18554,18602,18663,20748,20811,23379,23436,23480,23620,23883,23933,23981,93577,105982,106227,106565,106711,107051,107263,107426,107833,108171,108294,108633,108872,109129,109500,109560,109898,110184,110633,110925,111313,111618,111962,112207,112537,112744,113012,113285,113429,113630,113677,113733,156224,156963,164077,164798,169923,175434,177739,178021,178326,178588,178848,180271,182816,188772,189340"
+                    }
+                },
+                {
+                    "source": "/Users/lordmathi2741/Documents/Cursos/Finanzas-Mobile/PhonePlus-Mobile/android/app/src/main/res/values/styles.xml",
+                    "from": {
+                        "startLines": "3,14",
+                        "startColumns": "4,4",
+                        "startOffsets": "173,818",
+                        "endLines": "7,16",
+                        "endColumns": "12,12",
+                        "endOffsets": "476,982"
+                    },
+                    "to": {
+                        "startLines": "1488,1492",
+                        "startColumns": "4,4",
+                        "startOffsets": "93582,93763",
+                        "endLines": "1491,1494",
+                        "endColumns": "12,12",
+                        "endOffsets": "93758,93927"
                     }
                 },
                 {
@@ -4977,7 +4977,24 @@
             "outputFile": "com.example.phoneplus.app-debug-41:/values-night-v8_values-night-v8.arsc.flat",
             "map": [
                 {
-                    "source": "/Users/lordmathi2741/Documents/Cursos/Finanzas/PhonePlus-Mobile/android/app/src/main/res/values-night/styles.xml",
+                    "source": "/Users/lordmathi2741/.gradle/caches/8.10.2/transforms/3a4dcd3e8c92efa77cfa193b658940d9/transformed/appcompat-1.1.0/res/values-night-v8/values-night-v8.xml",
+                    "from": {
+                        "startLines": "2,3,4,5,6,7,8,9",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "55,125,209,293,389,491,593,687",
+                        "endColumns": "69,83,83,95,101,101,93,88",
+                        "endOffsets": "120,204,288,384,486,588,682,771"
+                    },
+                    "to": {
+                        "startLines": "9,10,11,12,13,14,15,16",
+                        "startColumns": "4,4,4,4,4,4,4,4",
+                        "startOffsets": "405,475,559,643,739,841,943,1037",
+                        "endColumns": "69,83,83,95,101,101,93,88",
+                        "endOffsets": "470,554,638,734,836,938,1032,1121"
+                    }
+                },
+                {
+                    "source": "/Users/lordmathi2741/Documents/Cursos/Finanzas-Mobile/PhonePlus-Mobile/android/app/src/main/res/values-night/styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",
@@ -4993,23 +5010,6 @@
                         "endLines": "5,8",
                         "endColumns": "12,12",
                         "endOffsets": "231,400"
-                    }
-                },
-                {
-                    "source": "/Users/lordmathi2741/.gradle/caches/8.10.2/transforms/3a4dcd3e8c92efa77cfa193b658940d9/transformed/appcompat-1.1.0/res/values-night-v8/values-night-v8.xml",
-                    "from": {
-                        "startLines": "2,3,4,5,6,7,8,9",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "55,125,209,293,389,491,593,687",
-                        "endColumns": "69,83,83,95,101,101,93,88",
-                        "endOffsets": "120,204,288,384,486,588,682,771"
-                    },
-                    "to": {
-                        "startLines": "9,10,11,12,13,14,15,16",
-                        "startColumns": "4,4,4,4,4,4,4,4",
-                        "startOffsets": "405,475,559,643,739,841,943,1037",
-                        "endColumns": "69,83,83,95,101,101,93,88",
-                        "endOffsets": "470,554,638,734,836,938,1032,1121"
                     }
                 }
             ]

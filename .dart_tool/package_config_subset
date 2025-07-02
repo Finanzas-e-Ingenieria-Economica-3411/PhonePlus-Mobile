@@ -54,6 +54,10 @@ http_parser
 3.4
 file:///Users/lordmathi2741/.pub-cache/hosted/pub.dev/http_parser-4.1.2/
 file:///Users/lordmathi2741/.pub-cache/hosted/pub.dev/http_parser-4.1.2/lib/
+intl
+3.0
+file:///Users/lordmathi2741/.pub-cache/hosted/pub.dev/intl-0.19.0/
+file:///Users/lordmathi2741/.pub-cache/hosted/pub.dev/intl-0.19.0/lib/
 leak_tracker
 3.2
 file:///Users/lordmathi2741/.pub-cache/hosted/pub.dev/leak_tracker-10.0.8/
@@ -202,6 +206,10 @@ flutter
 3.7
 file:///Users/lordmathi2741/SDK%20Flutter/flutter/packages/flutter/
 file:///Users/lordmathi2741/SDK%20Flutter/flutter/packages/flutter/lib/
+flutter_localizations
+3.7
+file:///Users/lordmathi2741/SDK%20Flutter/flutter/packages/flutter_localizations/
+file:///Users/lordmathi2741/SDK%20Flutter/flutter/packages/flutter_localizations/lib/
 flutter_test
 3.7
 file:///Users/lordmathi2741/SDK%20Flutter/flutter/packages/flutter_test/

@@ -22,6 +22,16 @@ class StorageHelper {
     return null;
   }
 
+  static Future<void> saveRole(String role) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString("role", role);
+  }
+
+  static Future<String?> getRole() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString("role");
+  }
+
   static Future<void> saveUserId(int id) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setInt("id",id);

@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:phoneplus/auth/interfaces/providers/auth_provider.dart';
 import 'package:phoneplus/auth/interfaces/screens/sign_up_screen.dart';
 import 'package:phoneplus/auth/interfaces/widgets/auth_text_field.dart';
+import 'package:phoneplus/credits/interfaces/screens/new_plan_screen.dart';
+import 'package:phoneplus/shared/infraestructure/helpers/storage_helper.dart';
+import 'package:phoneplus/shared/interfaces/screens/buyer_welcome_screen.dart';
+import 'package:phoneplus/shared/interfaces/screens/seller_welcome_screen.dart';
 import 'package:phoneplus/shared/interfaces/widgets/custom_button.dart';
 import 'package:phoneplus/ui/constants/constant.dart';
 import 'package:provider/provider.dart';
@@ -93,8 +97,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                         title: "Inicio de sesión exitoso!",
                                         content: "Bienvenido a PhonePlus!",
                                         isSuccess: true,
-                                        onConfirm: (){
-                                          Navigator.pop(context);
+                                        onConfirm: () async{
+                                          final role = await StorageHelper.getRole();
+                                          Navigator.pushReplacement(context, MaterialPageRoute(
+                                              builder: (_) =>
+                                              role == "Buyer" ? BuyerWelcomeScreen() : SellerWelcomeScreen()
+                                            )
+
+                                          );
                                         },
                                         onCancel: (){
                                           Navigator.pop(context);

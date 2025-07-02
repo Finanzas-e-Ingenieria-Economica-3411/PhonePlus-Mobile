@@ -12,6 +12,7 @@ class AuthProvider extends ChangeNotifier{
         final response = await authService.signIn(request);
         StorageHelper.saveUserId(response.id!);
         StorageHelper.saveToken(response.token!);
+        StorageHelper.saveRole(response.role!);
       } catch (e){
         throw Exception(e);
       }

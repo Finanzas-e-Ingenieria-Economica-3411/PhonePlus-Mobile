@@ -80,6 +80,12 @@
       "languageVersion": "3.5"
     },
     {
+      "name": "flutter_localizations",
+      "rootUri": "file:///Users/lordmathi2741/SDK%20Flutter/flutter/packages/flutter_localizations",
+      "packageUri": "lib/",
+      "languageVersion": "3.7"
+    },
+    {
       "name": "flutter_test",
       "rootUri": "file:///Users/lordmathi2741/SDK%20Flutter/flutter/packages/flutter_test",
       "packageUri": "lib/",
@@ -102,6 +108,12 @@
       "rootUri": "file:///Users/lordmathi2741/.pub-cache/hosted/pub.dev/http_parser-4.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "intl",
+      "rootUri": "file:///Users/lordmathi2741/.pub-cache/hosted/pub.dev/intl-0.19.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "leak_tracker",
@@ -320,7 +332,7 @@
       "languageVersion": "3.7"
     }
   ],
-  "generated": "2025-07-01T23:07:16.662746Z",
+  "generated": "2025-07-02T23:06:02.277113Z",
   "generator": "pub",
   "generatorVersion": "3.7.0",
   "flutterRoot": "file:///Users/lordmathi2741/SDK%20Flutter/flutter",
