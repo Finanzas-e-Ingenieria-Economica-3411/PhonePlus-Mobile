@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:phoneplus/auth/interfaces/providers/auth_provider.dart';
 import 'package:phoneplus/shared/interfaces/it/locators/logger_locator.dart';
 import 'package:phoneplus/shared/interfaces/screens/home_screen.dart';
 import 'package:phoneplus/ui/theme/theme.dart';
 import 'package:provider/provider.dart';
+import 'package:phoneplus/credits/interfaces/screens/new_plan_screen.dart';
+import 'package:phoneplus/credits/interfaces/providers/credit_provider.dart';
 
 void main() {
   setUpLoggerLocator();
@@ -17,11 +20,21 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider())
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => CreditProvider()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: AppTheme.appTheme,
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: const [
+          Locale('es', ''),
+          Locale('en', ''),
+        ],
         home: const HomeScreen()
       ),
     );
