@@ -1,38 +1,58 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:phoneplus/credits/interfaces/screens/new_plan_screen.dart';
-import 'package:phoneplus/shared/interfaces/widgets/custom_bottom_navigation_bar.dart';
-import 'package:phoneplus/shared/interfaces/widgets/custom_button.dart';
-import 'package:phoneplus/ui/constants/constant.dart';
+import 'package:provider/provider.dart';
 
-class BuyerWelcomeScreen extends StatelessWidget {
+import '../../../credits/interfaces/providers/credit_provider.dart';
+import '../../../credits/interfaces/screens/bonds_screen.dart';
+import '../../../ui/constants/constant.dart';
+import '../widgets/custom_bottom_navigation_bar.dart';
+import '../widgets/custom_button.dart';
+
+class BuyerWelcomeScreen extends StatefulWidget {
   const BuyerWelcomeScreen({super.key});
 
+  @override
+  State<BuyerWelcomeScreen> createState() => _BuyerWelcomeScreenState();
+
+}
+
+class _BuyerWelcomeScreenState extends State<BuyerWelcomeScreen> {
+
+  @override
+  void initState(){
+    super.initState();
+    Future.microtask(() => Provider.of<CreditProvider>(context, listen: false).getAvailableCredits());
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-          side: BorderSide(
-            color: Colors.black
-          )
+            borderRadius: BorderRadius.circular(20),
+            side: BorderSide(
+                color: Colors.black
+            )
         ),
         backgroundColor: background,
         centerTitle: true,
-        leading: Icon(
-            Icons.person,
-          color: primary,
-          size: 40,
+        leading: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: CircleAvatar(
+            backgroundColor: primary,
+            child: Icon(
+              Icons.person,
+              color: background,
+            ),
+          ),
         ),
         title:  Text(
-              "Inicio",
-            style: TextStyle(
+          "Inicio",
+          style: TextStyle(
               color: font,
               fontSize: 30,
               fontWeight: FontWeight.bold
-            ),
           ),
+        ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(),
       body: Container(
@@ -40,18 +60,18 @@ class BuyerWelcomeScreen extends StatelessWidget {
         child: Column(
           spacing: 25,
           children: [
-             Image.asset("assets/2de20633-6811-4178-b090-5c568b4dbc2d.jpeg"),
-             CustomButton(
-                 label: "Nuevo",
-                 onPressed: (){
-                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => NewPlanScreen()));
-                 },
-                 isStrong: true
-             ),
-            CustomButton(label: "Ver", onPressed: (){}, isStrong: true)
+            Image.asset("assets/d6d7fb08-90b3-49a0-9b4a-c6cbd10b5245.jpeg"),
+            CustomButton(
+                label: "Ver",
+                onPressed: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => BondsScreen()));
+                },
+                isStrong: true
+            )
           ],
         ),
       ),
     );
   }
 }
+

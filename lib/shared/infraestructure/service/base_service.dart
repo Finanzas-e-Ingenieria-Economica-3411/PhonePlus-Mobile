@@ -27,7 +27,7 @@ abstract class BaseService<TRequest extends Serializable>{
     return await StorageHelper.getToken() ?? "";
   }
 
-  Future<List<Map<String,dynamic>>> getAll() async {
+  Future<List<dynamic>> getAll() async {
     try {
       final token = await getToken();
       Options options = Options(
@@ -36,7 +36,7 @@ abstract class BaseService<TRequest extends Serializable>{
         },
       );
       final response = await _dio.get(Constant.baseUrl + resourcePath, options: options);
-      final data = response.data;
+      final List<dynamic> data = response.data;
       return data;
     } on DioException catch (e) {
       final statusCode = e.response?.statusCode;

@@ -13,6 +13,7 @@ class AuthProvider extends ChangeNotifier{
         StorageHelper.saveUserId(response.id!);
         StorageHelper.saveToken(response.token!);
         StorageHelper.saveRole(response.role!);
+        print(response.role!);
       } catch (e){
         throw Exception(e);
       }
