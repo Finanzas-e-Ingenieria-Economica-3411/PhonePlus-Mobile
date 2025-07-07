@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:phoneplus/core/helpers/date_time_helper.dart';
-import 'package:phoneplus/credits/domain/credit_response.dto.dart';
+import 'package:phoneplus/credits/domain/bond_response.dto.dart';
 
 class DetailsScreen extends StatelessWidget {
-  final CreditResponseDto creditResponseDto;
-  const DetailsScreen({super.key, required this.creditResponseDto});
+  final BondResponseDto bondResponseDto;
+  const DetailsScreen({super.key, required this.bondResponseDto});
 
   @override
   Widget build(BuildContext context) {
@@ -73,34 +73,34 @@ class DetailsScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    'Bono del ${creditResponseDto.clientName}',
-                    style: TextStyle(
+                    'Bono del ${bondResponseDto.issuerName ?? "-"}',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
-                    '${creditResponseDto.username}',
-                    style: TextStyle(
+                    bondResponseDto.username ?? "-",
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                     ),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
-                    'Saldo disponible: ${creditResponseDto.price}',
-                    style: TextStyle(
+                    'Valor nominal: ${bondResponseDto.nominalValue ?? "-"}',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                   Text(
-                    'Fecha de expiración: ${normalizeDate(creditResponseDto.startDate!)}',
-                    style: TextStyle(
+                    'Fecha de emisión: ${bondResponseDto.issueDate != null ? normalizeDate(bondResponseDto.issueDate!) : "-"}',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
                     ),
@@ -127,119 +127,103 @@ class DetailsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildDetailRow('Nombre:', 'Bono del ${creditResponseDto.clientName}'),
-                    const SizedBox(height: 12),
-                    _buildDetailRow('Saldo disponible:', '${creditResponseDto.price}'),
-                    const SizedBox(height: 12),
-                    _buildDetailRow('Fecha de ven.:', normalizeDate(creditResponseDto.startDate!)),
-                    const SizedBox(height: 12),
-                    _buildDetailRow('N° de operación:',  creditResponseDto.id.toString()),
-                    const SizedBox(height: 20),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildDetailRow('Nombre:', 'Bono del ${bondResponseDto.issuerName ?? "-"}'),
+                      const SizedBox(height: 12),
+                      _buildDetailRow('Valor nominal:', '${bondResponseDto.nominalValue ?? "-"}'),
+                      const SizedBox(height: 12),
+                      _buildDetailRow('Valor comercial:', '${bondResponseDto.commercialValue ?? "-"}'),
+                      const SizedBox(height: 12),
+                      _buildDetailRow('Tasa cupón:', '${bondResponseDto.couponRate ?? "-"}'),
+                      const SizedBox(height: 12),
+                      _buildDetailRow('Tasa de mercado:', '${bondResponseDto.marketRate ?? "-"}'),
+                      const SizedBox(height: 12),
+                      _buildDetailRow('Fecha de emisión:', bondResponseDto.issueDate != null ? normalizeDate(bondResponseDto.issueDate!) : "-"),
+                      const SizedBox(height: 12),
+                      _buildDetailRow('N° de operación:', bondResponseDto.id?.toString() ?? "-"),
+                      const SizedBox(height: 12),
+                      _buildDetailRow('TCEA:', bondResponseDto.tcea?.toStringAsFixed(4) ?? "-"),
+                      const SizedBox(height: 12),
+                      _buildDetailRow('TREA:', bondResponseDto.trea?.toStringAsFixed(4) ?? "-"),
+                      const SizedBox(height: 12),
+                      _buildDetailRow('Duración:', bondResponseDto.duration?.toStringAsFixed(4) ?? "-"),
+                      const SizedBox(height: 12),
+                      _buildDetailRow('Duración Modificada:', bondResponseDto.modifiedDuration?.toStringAsFixed(4) ?? "-"),
+                      const SizedBox(height: 12),
+                      _buildDetailRow('Convexidad:', bondResponseDto.convexity?.toStringAsFixed(4) ?? "-"),
+                      const SizedBox(height: 12),
+                      _buildDetailRow('Precio Máximo:', bondResponseDto.maxPrice?.toStringAsFixed(2) ?? "-"),
+                      const SizedBox(height: 20),
 
-                    // Amortization Table
-                    Container(
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF4A7C59),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Table(
-                        children: [
-                          const TableRow(
+                      // Cash Flow Table
+                      if (bondResponseDto.cashFlow != null && bondResponseDto.cashFlow!.isNotEmpty)
+                        Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF4A7C59),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Table(
                             children: [
-                              TableCell(
-                                child: Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text(
-                                    '#Cuota',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                              const TableRow(
+                                children: [
+                                  TableCell(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        '#Periodo',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
-                                    textAlign: TextAlign.center,
                                   ),
-                                ),
-                              ),
-                              TableCell(
-                                child: Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Amortización',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                                  TableCell(
+                                    child: Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'Flujo',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
                                     ),
-                                    textAlign: TextAlign.center,
                                   ),
-                                ),
+                                ],
                               ),
-                              TableCell(
-                                child: Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Pago',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                              ...bondResponseDto.cashFlow!.asMap().entries.map((entry) {
+                                final i = entry.key;
+                                final value = entry.value;
+                                return TableRow(
+                                  children: [
+                                    TableCell(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text('${i + 1}', textAlign: TextAlign.center, style: const TextStyle(color: Colors.white)),
+                                      ),
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                              TableCell(
-                                child: Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Interés',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
+                                    TableCell(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Text(value.toString(), textAlign: TextAlign.center, style: const TextStyle(color: Colors.white)),
+                                      ),
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
-                              TableCell(
-                                child: Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Saldo Pendiente',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12,
-                                    ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              ),
+                                  ],
+                                );
+                              }).toList(),
                             ],
                           ),
-                        ],
-                      ),
-                    ),
-
-                    // Table Rows
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.grey[50],
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(10),
-                          bottomRight: Radius.circular(10),
                         ),
-                      ),
-                      child: Table(
-                        children: [
-                        ],
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -267,63 +251,6 @@ class DetailsScreen extends StatelessWidget {
             fontSize: 16,
             color: Colors.black87,
             fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
-    );
-  }
-
-  TableRow _buildTableRow(String cuota, String amort, String pago, String interes, String saldo) {
-    return TableRow(
-      children: [
-        TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              cuota,
-              style: const TextStyle(fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              amort,
-              style: const TextStyle(fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              pago,
-              style: const TextStyle(fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              interes,
-              style: const TextStyle(fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-        TableCell(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              saldo,
-              style: const TextStyle(fontSize: 12),
-              textAlign: TextAlign.center,
-            ),
           ),
         ),
       ],

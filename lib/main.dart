@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import 'auth/interfaces/providers/auth_provider.dart';
 import 'credits/interfaces/providers/credit_provider.dart';
+import 'credits/interfaces/providers/bond_provider.dart';
 
 void main() {
   setUpLoggerLocator();
@@ -25,6 +26,7 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => CreditProvider()),
+        ChangeNotifierProvider(create: (_) => BondProvider()),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -55,16 +57,25 @@ class MyApp extends StatelessWidget {
   }
 
   Future<Widget> _determineHomeScreen() async {
-    String? token = await StorageHelper.getToken();
-    String? role = await StorageHelper.getRole();
-    if (token?.isNotEmpty ?? false) {
-      if (role == "Buyer") {
-        return const BuyerWelcomeScreen();
-      } else {
-        return const SellerWelcomeScreen();
-      }
+    // TODO: Quitar esta simulación y restaurar la lógica real de login cuando el backend esté listo
+    // Simulación: Cambia el valor de 'role' para probar como Buyer (bonista) o Seller (emisor)
+    const String simulatedRole = 'Seller'; // Cambia a 'Buyer' para probar como bonista
+    if (simulatedRole == "Buyer") {
+      return const BuyerWelcomeScreen();
     } else {
-      return const HomeScreen();
+      return const SellerWelcomeScreen();
     }
+    // --- Lógica real (descomentar cuando se tenga backend) ---
+    // String? token = await StorageHelper.getToken();
+    // String? role = await StorageHelper.getRole();
+    // if (token?.isNotEmpty ?? false) {
+    //   if (role == "Buyer") {
+    //     return const BuyerWelcomeScreen();
+    //   } else {
+    //     return const SellerWelcomeScreen();
+    //   }
+    // } else {
+    //   return const HomeScreen();
+    // }
   }
 }

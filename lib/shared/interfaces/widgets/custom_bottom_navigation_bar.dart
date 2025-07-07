@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../ui/constants/constant.dart';
+import '../screens/config_screen.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   const CustomBottomNavigationBar({super.key});
@@ -26,6 +27,14 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             setState(() {
               currentIndex = index;
             });
+            if (index == 3) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) =>
+                  ConfigScreen()
+                ),
+              );
+            }
           },
           backgroundColor: primary,
             items: [
@@ -49,7 +58,14 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                     size: 30,
                   ),
                 label: ''
-              )
+              ),
+              BottomNavigationBarItem(
+                  icon: Icon(
+                      Icons.settings,
+                    size: 30,
+                  ),
+                label: ''
+              ),
             ]
         ),
     );

@@ -59,7 +59,7 @@ class _SellerWelcomeScreenState extends State<SellerWelcomeScreen> {
             CustomButton(
                 label: "Ver",
                 onPressed: (){
-
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => BondsScreen()));
                 },
                 isStrong: true
             )

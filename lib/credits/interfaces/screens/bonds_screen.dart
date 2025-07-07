@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:phoneplus/core/helpers/date_time_helper.dart';
-import 'package:phoneplus/credits/interfaces/providers/credit_provider.dart';
+import 'package:phoneplus/credits/interfaces/providers/bond_provider.dart';
+import 'package:phoneplus/credits/domain/bond_response.dto.dart';
 import 'package:phoneplus/credits/interfaces/screens/details_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -15,8 +16,14 @@ class _BondsScreenState extends State<BondsScreen> {
   int? selectedBondIndex;
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() => Provider.of<BondProvider>(context, listen: false).getAvailableBonds());
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final creditProvider = context.watch<CreditProvider>();
+    final bondProvider = context.watch<BondProvider>();
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: SafeArea(
@@ -68,9 +75,9 @@ class _BondsScreenState extends State<BondsScreen> {
             Expanded(
               child: ListView.builder(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: creditProvider.creditNumber,
+                itemCount: bondProvider.bondNumber,
                 itemBuilder: (context, index) {
-                  final bond = creditProvider.credits[index];
+                  final bond = bondProvider.bonds[index];
                   final isSelected = selectedBondIndex == index;
                   return GestureDetector(
                     onTap: () {
@@ -98,7 +105,7 @@ class _BondsScreenState extends State<BondsScreen> {
                       child: Column(
                         children: [
                           Text(
-                            'Bono del ${bond.clientName}',
+                            'Bono del ${bond.issuerName ?? "-"}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -107,7 +114,7 @@ class _BondsScreenState extends State<BondsScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            '${bond.username}:',
+                            '${bond.username ?? "-"}:',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -115,7 +122,7 @@ class _BondsScreenState extends State<BondsScreen> {
                           ),
                           const SizedBox(height: 8),
                           Text(
-                            'Saldo disponible: ${bond.price}',
+                            'Valor nominal: ${bond.nominalValue ?? "-"}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 16,
@@ -124,7 +131,7 @@ class _BondsScreenState extends State<BondsScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'Fecha de expiración: ${normalizeDate(bond.startDate)}',
+                            'Fecha de emisión: ${bond.issueDate != null ? normalizeDate(bond.issueDate!) : "-"}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 14,
@@ -140,9 +147,16 @@ class _BondsScreenState extends State<BondsScreen> {
 
             // Request Button
             GestureDetector(
-              onTap: (){
-                Navigator.push(context, MaterialPageRoute(builder: (_) => DetailsScreen(creditResponseDto: creditProvider.credits[selectedBondIndex])));
-              },
+              onTap: selectedBondIndex != null
+                  ? () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => DetailsScreen(bondResponseDto: bondProvider.bonds[selectedBondIndex!]),
+                        ),
+                      );
+                    }
+                  : null,
               child: Container(
                 margin: const EdgeInsets.all(16),
                 width: double.infinity,

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:phoneplus/credits/domain/credit_request.dto.dart';
-import 'package:phoneplus/credits/infrastructure/service/credit.service.dart';
+import 'package:phoneplus/credits/domain/bond_request.dto.dart';
+import 'package:phoneplus/credits/interfaces/providers/bond_provider.dart';
 import 'package:phoneplus/shared/interfaces/widgets/custom_button.dart';
 import 'package:phoneplus/shared/interfaces/widgets/custom_dialog.dart';
 import 'package:phoneplus/shared/interfaces/widgets/form_text_field.dart';
 import 'package:phoneplus/shared/infraestructure/helpers/storage_helper.dart';
 import 'package:phoneplus/ui/constants/constant.dart';
 import 'package:provider/provider.dart';
-import 'package:phoneplus/credits/interfaces/providers/credit_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NewPlanScreen extends StatefulWidget {
   const NewPlanScreen({super.key});
@@ -18,28 +18,54 @@ class NewPlanScreen extends StatefulWidget {
 
 class _NewPlanScreenState extends State<NewPlanScreen> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController montoController = TextEditingController();
-  final TextEditingController cuotaController = TextEditingController();
-  final TextEditingController plazoController = TextEditingController();
-  final TextEditingController fechaController = TextEditingController();
-  final TextEditingController interesController = TextEditingController();
-  final TextEditingController seguroController = TextEditingController();
-  final TextEditingController periodoController = TextEditingController();
-  final TextEditingController amortizationController = TextEditingController();
-  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController nominalValueController = TextEditingController();
+  final TextEditingController commercialValueController = TextEditingController();
+  final TextEditingController couponRateController = TextEditingController();
+  final TextEditingController marketRateController = TextEditingController();
+  final TextEditingController periodsController = TextEditingController();
+  final TextEditingController currencyController = TextEditingController();
+  final TextEditingController rateTypeController = TextEditingController();
+  final TextEditingController capitalizationController = TextEditingController();
+  final TextEditingController structuringFeeController = TextEditingController();
+  final TextEditingController placementFeeController = TextEditingController();
+  final TextEditingController flotationFeeController = TextEditingController();
+  final TextEditingController cavaliFeeController = TextEditingController();
+  final TextEditingController redemptionPremiumController = TextEditingController();
+  final TextEditingController gracePeriodsController = TextEditingController();
+  final TextEditingController issueDateController = TextEditingController();
 
+  @override
+  void initState() {
+    super.initState();
+    _loadConfigToFields();
+  }
+
+  Future<void> _loadConfigToFields() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      currencyController.text = prefs.getString('config_currency') ?? '';
+      rateTypeController.text = prefs.getString('config_rateType') ?? '';
+      capitalizationController.text = prefs.getString('config_capitalization') ?? '';
+    });
+  }
 
   @override
   void dispose() {
-    phoneNumberController.dispose();
-    montoController.dispose();
-    cuotaController.dispose();
-    plazoController.dispose();
-    fechaController.dispose();
-    interesController.dispose();
-    seguroController.dispose();
-    periodoController.dispose();
-    amortizationController.dispose();
+    nominalValueController.dispose();
+    commercialValueController.dispose();
+    couponRateController.dispose();
+    marketRateController.dispose();
+    periodsController.dispose();
+    currencyController.dispose();
+    rateTypeController.dispose();
+    capitalizationController.dispose();
+    structuringFeeController.dispose();
+    placementFeeController.dispose();
+    flotationFeeController.dispose();
+    cavaliFeeController.dispose();
+    redemptionPremiumController.dispose();
+    gracePeriodsController.dispose();
+    issueDateController.dispose();
     super.dispose();
   }
 
@@ -52,35 +78,41 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
       locale: const Locale('es', ''),
     );
     if (picked != null) {
-      fechaController.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
+      issueDateController.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
     }
   }
 
-  Future<void> _consultarCredito() async {
+  Future<void> _registerBond() async {
     if (_formKey.currentState?.validate() ?? false) {
       final userId = await StorageHelper.getUserId();
-      final request = CreditRequest(
-        phoneNumber: int.tryParse(phoneNumberController.text),
-        price: double.tryParse(montoController.text),
-        startDate: _parseDateToIso(fechaController.text),
-        months: int.tryParse(plazoController.text),
-        interestRate: double.tryParse(interesController.text),
-        insurance: int.tryParse(seguroController.text),
-        amortization: int.tryParse(amortizationController.text),
-        paid: 0,
-        interest: 0,
-        pendingPayment: 0,
+      final request = BondRequest(
+        nominalValue: double.tryParse(nominalValueController.text),
+        commercialValue: double.tryParse(commercialValueController.text),
+        couponRate: double.tryParse(couponRateController.text),
+        marketRate: double.tryParse(marketRateController.text),
+        periods: int.tryParse(periodsController.text),
+        currency: currencyController.text,
+        rateType: rateTypeController.text,
+        capitalization: capitalizationController.text,
+        structuringFee: double.tryParse(structuringFeeController.text),
+        placementFee: double.tryParse(placementFeeController.text),
+        flotationFee: double.tryParse(flotationFeeController.text),
+        cavaliFee: double.tryParse(cavaliFeeController.text),
+        redemptionPremium: double.tryParse(redemptionPremiumController.text),
+        gracePeriods: int.tryParse(gracePeriodsController.text),
+        issueDate: _parseDateToIso(issueDateController.text),
         userId: userId,
+        state: 'active',
       );
       try {
-        final creditProvider = context.read<CreditProvider>();
-        await creditProvider.createCredit(request);
+        final bondProvider = context.read<BondProvider>();
+        await bondProvider.createBond(request);
         if (mounted) {
           await showDialog(
             context: context,
             builder: (context) => CustomDialog(
-              title: '¡Consulta exitosa!',
-              content: 'El crédito fue registrado correctamente.',
+              title: '¡Registro exitoso!',
+              content: 'El bono fue registrado correctamente.',
               isSuccess: true,
               onConfirm: () => Navigator.pop(context),
               onCancel: () => Navigator.pop(context),
@@ -93,7 +125,7 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
             context: context,
             builder: (context) => CustomDialog(
               title: '¡Ocurrió un error!',
-              content: 'No se pudo registrar el crédito. Intente nuevamente.',
+              content: 'No se pudo registrar el bono. Intente nuevamente.',
               isSuccess: false,
               onConfirm: () => Navigator.pop(context),
               onCancel: () => Navigator.pop(context),
@@ -119,15 +151,21 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
 
   void _cleanFields() {
     setState(() {
-      phoneNumberController.clear();
-      montoController.clear();
-      cuotaController.clear();
-      plazoController.clear();
-      fechaController.clear();
-      interesController.clear();
-      seguroController.clear();
-      periodoController.clear();
-      amortizationController.clear();
+      nominalValueController.clear();
+      commercialValueController.clear();
+      couponRateController.clear();
+      marketRateController.clear();
+      periodsController.clear();
+      currencyController.clear();
+      rateTypeController.clear();
+      capitalizationController.clear();
+      structuringFeeController.clear();
+      placementFeeController.clear();
+      flotationFeeController.clear();
+      cavaliFeeController.clear();
+      redemptionPremiumController.clear();
+      gracePeriodsController.clear();
+      issueDateController.clear();
     });
   }
 
@@ -143,7 +181,7 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
               SizedBox(
                 width: 170,
                 child: Text(
-                  "Nuevo",
+                  "Nuevo Bono",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 25,
@@ -158,67 +196,106 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                 child: Column(
                   children: [
                     FormTextField(
-                      label: 'Número de celular',
-                      hintText: 'Ingrese el número de celular',
-                      controller: phoneNumberController,
+                      label: 'Valor nominal',
+                      hintText: 'Ingrese el valor nominal',
+                      controller: nominalValueController,
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 20),
                     FormTextField(
-                      label: 'Monto (S/)',
-                      hintText: 'Ingrese el monto',
-                      controller: montoController,
+                      label: 'Valor comercial',
+                      hintText: 'Ingrese el valor comercial',
+                      controller: commercialValueController,
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 20),
                     FormTextField(
-                      label: 'Cuota inicial %',
-                      hintText: 'Ingrese la cuota inicial',
-                      controller: cuotaController,
+                      label: 'Tasa cupón (%)',
+                      hintText: 'Ingrese la tasa cupón',
+                      controller: couponRateController,
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 20),
                     FormTextField(
-                      label: 'Plazo (meses)',
+                      label: 'Tasa de mercado (%)',
+                      hintText: 'Ingrese la tasa de mercado',
+                      controller: marketRateController,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 20),
+                    FormTextField(
+                      label: 'Plazo (periodos)',
                       hintText: 'Ingrese el plazo',
-                      controller: plazoController,
+                      controller: periodsController,
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 20),
                     FormTextField(
-                      label: 'Fecha de inicio',
+                      label: 'Moneda',
+                      hintText: 'Ingrese la moneda',
+                      controller: currencyController,
+                    ),
+                    const SizedBox(height: 20),
+                    FormTextField(
+                      label: 'Tipo de tasa',
+                      hintText: 'Efectiva/Nominal',
+                      controller: rateTypeController,
+                    ),
+                    const SizedBox(height: 20),
+                    FormTextField(
+                      label: 'Capitalización',
+                      hintText: 'Ingrese la capitalización',
+                      controller: capitalizationController,
+                    ),
+                    const SizedBox(height: 20),
+                    FormTextField(
+                      label: 'Gasto de estructuración (%)',
+                      hintText: 'Ingrese el gasto de estructuración',
+                      controller: structuringFeeController,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 20),
+                    FormTextField(
+                      label: 'Gasto de colocación (%)',
+                      hintText: 'Ingrese el gasto de colocación',
+                      controller: placementFeeController,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 20),
+                    FormTextField(
+                      label: 'Gasto de flotación (%)',
+                      hintText: 'Ingrese el gasto de flotación',
+                      controller: flotationFeeController,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 20),
+                    FormTextField(
+                      label: 'Gasto Cavali (%)',
+                      hintText: 'Ingrese el gasto Cavali',
+                      controller: cavaliFeeController,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 20),
+                    FormTextField(
+                      label: 'Prima de redención (%)',
+                      hintText: 'Ingrese la prima de redención',
+                      controller: redemptionPremiumController,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 20),
+                    FormTextField(
+                      label: 'Plazos de gracia',
+                      hintText: 'Ingrese los plazos de gracia',
+                      controller: gracePeriodsController,
+                      keyboardType: TextInputType.number,
+                    ),
+                    const SizedBox(height: 20),
+                    FormTextField(
+                      label: 'Fecha de emisión',
                       hintText: 'Seleccione la fecha',
-                      controller: fechaController,
+                      controller: issueDateController,
                       readOnly: true,
                       onTap: () => _selectDate(context),
-                    ),
-                    const SizedBox(height: 20),
-                    FormTextField(
-                      label: 'Tasa de interés (%)',
-                      hintText: 'Ingrese la tasa de interés',
-                      controller: interesController,
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 20),
-                    FormTextField(
-                      label: 'Seguro de desgravamen',
-                      hintText: 'Ingrese el seguro',
-                      controller: seguroController,
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 20),
-                    FormTextField(
-                      label: 'Periodo de gracia (meses)',
-                      hintText: 'Ingrese el periodo de gracia',
-                      controller: periodoController,
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 20),
-                    FormTextField(
-                      label: 'Amortización',
-                      hintText: 'Ingrese la amortización',
-                      controller: amortizationController,
-                      keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 30),
                     Row(
@@ -233,8 +310,8 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                         const SizedBox(width: 16),
                         Expanded(
                           child: CustomButton(
-                            label: "Consultar",
-                            onPressed: _consultarCredito,
+                            label: "Registrar",
+                            onPressed: _registerBond,
                             isStrong: true,
                           ),
                         ),

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../credits/interfaces/providers/credit_provider.dart';
+import '../../../credits/interfaces/providers/bond_provider.dart';
 import '../../../credits/interfaces/screens/bonds_screen.dart';
 import '../../../ui/constants/constant.dart';
 import '../widgets/custom_bottom_navigation_bar.dart';
@@ -21,7 +21,8 @@ class _BuyerWelcomeScreenState extends State<BuyerWelcomeScreen> {
   @override
   void initState(){
     super.initState();
-    Future.microtask(() => Provider.of<CreditProvider>(context, listen: false).getAvailableCredits());
+    // TODO: Cambiar a lógica real cuando el backend esté listo
+    Future.microtask(() => Provider.of<BondProvider>(context, listen: false).getAvailableBonds());
   }
   @override
   Widget build(BuildContext context) {
@@ -74,4 +75,3 @@ class _BuyerWelcomeScreenState extends State<BuyerWelcomeScreen> {
     );
   }
 }
-
