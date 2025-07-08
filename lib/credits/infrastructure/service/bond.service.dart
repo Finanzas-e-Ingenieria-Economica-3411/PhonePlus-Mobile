@@ -12,5 +12,12 @@ class BondService extends BaseService<BondRequest> {
       throw Exception('Error creating bond: $e');
     }
   }
-}
 
+  Future<void> updateBond(int id, BondRequest request) async {
+    try {
+      await put(id, request);
+    } catch (e) {
+      throw Exception('Error updating bond: $e');
+    }
+  }
+}

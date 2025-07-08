@@ -57,25 +57,16 @@ class MyApp extends StatelessWidget {
   }
 
   Future<Widget> _determineHomeScreen() async {
-    // TODO: Quitar esta simulación y restaurar la lógica real de login cuando el backend esté listo
-    // Simulación: Cambia el valor de 'role' para probar como Buyer (bonista) o Seller (emisor)
-    const String simulatedRole = 'Seller'; // Cambia a 'Buyer' para probar como bonista
-    if (simulatedRole == "Buyer") {
-      return const BuyerWelcomeScreen();
+    String? token = await StorageHelper.getToken();
+    String? role = await StorageHelper.getRole();
+    if (token?.isNotEmpty ?? false) {
+      if (role == "Buyer") {
+        return const BuyerWelcomeScreen();
+      } else {
+        return const SellerWelcomeScreen();
+      }
     } else {
-      return const SellerWelcomeScreen();
+      return const HomeScreen();
     }
-    // --- Lógica real (descomentar cuando se tenga backend) ---
-    // String? token = await StorageHelper.getToken();
-    // String? role = await StorageHelper.getRole();
-    // if (token?.isNotEmpty ?? false) {
-    //   if (role == "Buyer") {
-    //     return const BuyerWelcomeScreen();
-    //   } else {
-    //     return const SellerWelcomeScreen();
-    //   }
-    // } else {
-    //   return const HomeScreen();
-    // }
   }
 }

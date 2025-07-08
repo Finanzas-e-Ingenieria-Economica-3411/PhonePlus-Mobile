@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:phoneplus/auth/interfaces/screens/login_screen.dart';
 import 'package:phoneplus/shared/interfaces/screens/welcome_page.dart';
 
+import '../widgets/custom_bottom_navigation_bar.dart';
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -16,6 +18,7 @@ class HomeScreen extends StatelessWidget {
           LoginScreen(),
         ],
       ),
+      bottomNavigationBar: CustomBottomNavigationBar(),
     );
   }
 }

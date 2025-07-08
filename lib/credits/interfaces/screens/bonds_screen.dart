@@ -149,13 +149,13 @@ class _BondsScreenState extends State<BondsScreen> {
             GestureDetector(
               onTap: selectedBondIndex != null
                   ? () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => DetailsScreen(bondResponseDto: bondProvider.bonds[selectedBondIndex!]),
-                        ),
-                      );
-                    }
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => DetailsScreen(bondResponseDto: bondProvider.bonds[selectedBondIndex!]),
+                  ),
+                );
+              }
                   : null,
               child: Container(
                 margin: const EdgeInsets.all(16),
@@ -169,7 +169,7 @@ class _BondsScreenState extends State<BondsScreen> {
                 ),
                 child: const Center(
                   child: Text(
-                    'Solicitar Bono Seleccionado',
+                    'Mostrar Detalles',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:phoneplus/core/helpers/date_time_helper.dart';
 import 'package:phoneplus/credits/domain/bond_response.dto.dart';
+import 'package:phoneplus/credits/interfaces/screens/new_plan_screen.dart';
+import 'package:phoneplus/shared/infraestructure/helpers/storage_helper.dart';
+
+import 'edit_bond_screen.dart';
 
 class DetailsScreen extends StatelessWidget {
   final BondResponseDto bondResponseDto;
@@ -110,6 +114,37 @@ class DetailsScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 20),
+            // Botón Editar solo para emisores
+            FutureBuilder<String?>(
+              future: StorageHelper.getRole(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.done && snapshot.data == "Seller") {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF4A7C59),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => EditBondScreen(bond: bondResponseDto),
+                            ),
+                          );
+                        },
+                        child: const Text('Editar Bono', style: TextStyle(fontSize: 16)),
+                      ),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
 
             // Details Info
             Expanded(
@@ -145,17 +180,17 @@ class DetailsScreen extends StatelessWidget {
                       const SizedBox(height: 12),
                       _buildDetailRow('N° de operación:', bondResponseDto.id?.toString() ?? "-"),
                       const SizedBox(height: 12),
-                      _buildDetailRow('TCEA:', bondResponseDto.tcea?.toStringAsFixed(4) ?? "-"),
+                      _buildDetailRowWithInfo('TCEA:', bondResponseDto.tcea?.toStringAsFixed(4) ?? "-", 'Tasa de Costo Efectivo Anual (emisor): mide el costo total anual del bono para el emisor.'),
                       const SizedBox(height: 12),
-                      _buildDetailRow('TREA:', bondResponseDto.trea?.toStringAsFixed(4) ?? "-"),
+                      _buildDetailRowWithInfo('TREA:', bondResponseDto.trea?.toStringAsFixed(4) ?? "-", 'Tasa de Rendimiento Efectivo Anual (bonista): mide el rendimiento anual real para el inversionista.'),
                       const SizedBox(height: 12),
-                      _buildDetailRow('Duración:', bondResponseDto.duration?.toStringAsFixed(4) ?? "-"),
+                      _buildDetailRowWithInfo('Duración:', bondResponseDto.duration?.toStringAsFixed(4) ?? "-", 'Duración: mide el plazo promedio ponderado de los flujos de caja del bono.'),
                       const SizedBox(height: 12),
-                      _buildDetailRow('Duración Modificada:', bondResponseDto.modifiedDuration?.toStringAsFixed(4) ?? "-"),
+                      _buildDetailRowWithInfo('Duración Modificada:', bondResponseDto.modifiedDuration?.toStringAsFixed(4) ?? "-", 'Duración modificada: mide la sensibilidad del precio del bono ante cambios en la tasa de interés.'),
                       const SizedBox(height: 12),
-                      _buildDetailRow('Convexidad:', bondResponseDto.convexity?.toStringAsFixed(4) ?? "-"),
+                      _buildDetailRowWithInfo('Convexidad:', bondResponseDto.convexity?.toStringAsFixed(4) ?? "-", 'Convexidad: mide la curvatura de la relación precio-tasa de interés del bono.'),
                       const SizedBox(height: 12),
-                      _buildDetailRow('Precio Máximo:', bondResponseDto.maxPrice?.toStringAsFixed(2) ?? "-"),
+                      _buildDetailRowWithInfo('Precio Máximo:', bondResponseDto.maxPrice?.toStringAsFixed(2) ?? "-", 'Precio máximo: precio máximo que el inversionista debería pagar para que el bono sea rentable.'),
                       const SizedBox(height: 20),
 
                       // Cash Flow Table
@@ -254,6 +289,55 @@ class DetailsScreen extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildDetailRowWithInfo(String label, String value, String info) {
+    return Builder(
+      builder: (context) => Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(width: 4),
+              GestureDetector(
+                onTap: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: Text(label),
+                      content: Text(info),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cerrar'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+                child: const Icon(Icons.info_outline, size: 18, color: Colors.blueGrey),
+              ),
+            ],
+          ),
+          Text(
+            value,
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

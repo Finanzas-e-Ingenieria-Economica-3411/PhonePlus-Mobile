@@ -147,7 +147,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Row(
                         children: [
                           Text(
-                              "Soy vendedor",
+                              "Soy emisor",
                             style: TextStyle(
                               color: text,
                               fontSize: 17
