@@ -44,13 +44,16 @@ class BondProvider extends ChangeNotifier {
     }
   }
 
-
-
   Future<void> updateBond(int id, BondRequest request) async {
     try {
       final service = BondService();
       await service.updateBond(id, request);
-      await getAvailableBonds();
+      final role = await StorageHelper.getRole();
+      if (role == "Emisor") {
+        await getMyBonds();
+      } else {
+        await getAvailableBonds();
+      }
     } catch (e) {
       throw Exception(e);
     }
@@ -64,6 +67,16 @@ class BondProvider extends ChangeNotifier {
       notifyListeners();
     } catch (e) {
       throw Exception(e);
+    }
+  }
+
+  Future<BondResponseDto?> getBondById(int id) async {
+    try {
+      final service = BondService();
+      final json = await service.getById(id);
+      return BondResponseDto.fromJson(json);
+    } catch (e) {
+      return null;
     }
   }
 }

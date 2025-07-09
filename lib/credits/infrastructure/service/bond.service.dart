@@ -20,7 +20,7 @@ class BondService extends BaseService {
 
   Future<void> updateBond(int id, BondRequest request) async {
     try {
-      await put(id, request);
+      await patchCustom("credit/edit", request);
     } catch (e) {
       throw Exception('Error updating bond: $e');
     }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/helpers/date_time_helper.dart';
+import '../../../shared/infraestructure/helpers/storage_helper.dart';
 import '../../../shared/interfaces/widgets/custom_button.dart';
 import '../../../shared/interfaces/widgets/custom_dialog.dart';
 import '../../../shared/interfaces/widgets/form_text_field.dart';
@@ -156,6 +157,9 @@ class _EditBondScreenState extends State<EditBondScreen> {
     cavaliFeeController = TextEditingController(text: b.cavaliFee?.toString() ?? '');
     redemptionPremiumController = TextEditingController(text: b.redemptionPremium?.toString() ?? '');
     gracePeriodsController = TextEditingController();
+    currencyController = TextEditingController();
+    rateTypeController = TextEditingController();
+    capitalizationController = TextEditingController();
     _loadConfigFromPrefs();
     selectedGraceType = 0;
     // Si el bono tiene periodos de gracia, inicializarlos
@@ -198,7 +202,12 @@ class _EditBondScreenState extends State<EditBondScreen> {
   Future<void> _editBond() async {
     if (_formKey.currentState?.validate() ?? false) {
       final bondProvider = context.read<BondProvider>();
+      int? userId = widget.bond.userId;
+      if (userId == null) {
+        userId = await StorageHelper.getUserId();
+      }
       final request = BondRequest(
+        id: widget.bond.id,
         commercialValue: double.tryParse(commercialValueController.text),
         nominalValue: double.tryParse(nominalValueController.text),
         structurationRate: double.tryParse(structuringFeeController.text),
@@ -210,14 +219,15 @@ class _EditBondScreenState extends State<EditBondScreen> {
         frequencies: 1, // Puedes agregar un dropdown si lo necesitas
         dayPerYear: 360,
         capitalizationTypes: selectedCapitalizationType,
-        userId: widget.bond.userId,
+        userId: userId,
         cuponRate: double.tryParse(couponRateController.text),
         cuponRateType: selectedCuponRateType,
         cuponRateFrequency: 1, // Puedes agregar un dropdown si lo necesitas
         cuponRateCapitalization: selectedCapitalizationType,
         currency: selectedCurrency,
-        gracePeriods: gracePeriods,
+        gracePeriods: gracePeriods.isNotEmpty ? gracePeriods : [GracePeriod(period: 0, type: 0)],
       );
+      print('Request PATCH BONO: ' + request.toRequest().toString());
       try {
         await bondProvider.updateBond(widget.bond.id!, request);
         if (mounted) {
@@ -227,8 +237,14 @@ class _EditBondScreenState extends State<EditBondScreen> {
               title: '¡Edición exitosa!',
               content: 'El bono fue editado correctamente.',
               isSuccess: true,
-              onConfirm: () => Navigator.pop(context),
-              onCancel: () => Navigator.pop(context),
+              onConfirm: () {
+                Navigator.pop(context); // Cierra el diálogo
+                Navigator.pop(context); // Vuelve a la lista de bonos
+              },
+              onCancel: () {
+                Navigator.pop(context); // Cierra el diálogo
+                Navigator.pop(context); // Vuelve a la lista de bonos
+              },
             ),
           );
         }

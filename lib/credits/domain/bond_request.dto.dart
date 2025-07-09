@@ -26,8 +26,10 @@ class BondRequest with Serializable {
   int? cuponRateCapitalization;
   int? currency;
   List<GracePeriod>? gracePeriods;
+  int? id;
 
   BondRequest({
+    this.id,
     this.commercialValue,
     this.nominalValue,
     this.structurationRate,
@@ -51,24 +53,25 @@ class BondRequest with Serializable {
   @override
   Map<String, dynamic> toRequest() {
     return {
-      'ComercialValue': commercialValue,
-      'NominalValue': nominalValue,
-      'StructurationRate': structurationRate,
-      'ColonRate': colonRate,
-      'FlotationRate': flotationRate,
-      'CavaliRate': cavaliRate,
-      'PrimRate': primRate,
-      'NumberOfYears': numberOfYears,
-      'Frequencies': frequencies,
-      'DayPerYear': dayPerYear,
-      'CapitalizationTypes': capitalizationTypes,
-      'UserId': userId,
-      'CuponRate': cuponRate,
-      'CuponRateType': cuponRateType,
-      'CuponRateFrequency': cuponRateFrequency,
-      'CuponRateCapitalization': cuponRateCapitalization,
-      'Currency': currency,
-      'GracePeriods': gracePeriods?.map((e) => e.toJson()).toList(),
+      'id': id,
+      'comercialValue': commercialValue,
+      'nominalValue': nominalValue,
+      'structurationRate': structurationRate,
+      'colonRate': colonRate,
+      'flotationRate': flotationRate,
+      'cavaliRate': cavaliRate,
+      'primRate': primRate,
+      'numberOfYears': numberOfYears,
+      'frequencies': frequencies,
+      'dayPerYear': dayPerYear,
+      'capitalizationTypes': capitalizationTypes,
+      'userId': userId,
+      'cuponRate': cuponRate,
+      'cuponRateType': cuponRateType,
+      'cuponRateFrequency': cuponRateFrequency,
+      'cuponRateCapitalization': cuponRateCapitalization,
+      'currency': currency,
+      'gracePeriods': gracePeriods?.map((e) => e.toJson()).toList(),
     };
   }
 }

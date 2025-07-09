@@ -105,7 +105,7 @@ abstract class BaseService<TRequest extends Serializable>{
           'Authorization': 'Bearer $token',
         },
       );
-      await _dio.put("${Constant.baseUrl}$resourcePath/$id", data: request.toRequest(), options: options);
+      await _dio.patch("${Constant.baseUrl}$resourcePath/$id", data: request.toRequest(), options: options);
       return true;
     } on DioException catch (e){
       final statusCode = e.response?.statusCode;
@@ -157,6 +157,28 @@ abstract class BaseService<TRequest extends Serializable>{
       logger.log(
         Level.error,
         'Error while calling GET BY ID ${Constant.baseUrl}$resourcePath, status code: $statusCode, message: ${e.message}',
+      );
+      throw Exception('HTTP Error: $statusCode');
+    }catch (e){
+      throw Exception("Unknown exception: $e");
+    }
+  }
+
+  Future<bool> patchCustom(String customPath, TRequest request) async {
+    try{
+      final token = await getToken();
+      Options options = Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      await _dio.patch("${Constant.baseUrl}$customPath", data: request.toRequest(), options: options);
+      return true;
+    } on DioException catch (e){
+      final statusCode = e.response?.statusCode;
+      logger.log(
+        Level.error,
+        'Error while calling PATCH ${Constant.baseUrl}$customPath, status code: $statusCode, message: ${e.message}',
       );
       throw Exception('HTTP Error: $statusCode');
     }catch (e){
