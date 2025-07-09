@@ -38,7 +38,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
       SellerWelcomeScreen() : BuyerWelcomeScreen()),
       BondsScreen(),
       if (role == "Emisor")
-        NewPlanScreen()
+        NewPlanScreen(),
+      ConfigScreen(),
     ];
 
     List<BottomNavigationBarItem> sections = [
@@ -61,14 +62,36 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
           icon: Icon(Icons.add, size: 30),
           label: 'Nuevo Bono',
         ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.settings, size: 30),
+        label: 'Configuración',
+      ),
     ];
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25),
+        color: Colors.white, // Fondo claro para mejor contraste
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black12,
+            blurRadius: 8,
+            offset: Offset(0, 2),
+          ),
+        ],
       ),
-      child: BottomNavigationBar(
-          selectedItemColor: background,
-          unselectedItemColor: background,
+      child: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Colors.white,
+          primaryColor: Colors.black,
+          textTheme: Theme.of(context).textTheme.copyWith(
+            bodySmall: TextStyle(color: Colors.black),
+          ),
+        ),
+        child: BottomNavigationBar(
+          selectedItemColor: Colors.green[800],
+          unselectedItemColor: Colors.black54,
+          selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold, color: Colors.green[800]),
+          unselectedLabelStyle: TextStyle(color: Colors.black54),
           currentIndex: currentIndex,
           onTap: (index){
             setState(() {
@@ -76,9 +99,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
             });
             Navigator.push(context, MaterialPageRoute(builder: (_) => screens[index]));
           },
-          backgroundColor: primary,
-            items: sections
+          backgroundColor: Colors.white,
+          items: sections,
+          type: BottomNavigationBarType.fixed,
         ),
+      ),
     );
   }
 }

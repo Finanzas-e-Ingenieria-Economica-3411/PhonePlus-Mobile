@@ -10,6 +10,8 @@ import 'package:phoneplus/ui/constants/constant.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../screens/bonds_screen.dart';
+
 class NewPlanScreen extends StatefulWidget {
   const NewPlanScreen({super.key});
 
@@ -231,8 +233,20 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
               title: '¡Registro exitoso!',
               content: 'El bono fue registrado correctamente.',
               isSuccess: true,
-              onConfirm: () => Navigator.pop(context),
-              onCancel: () => Navigator.pop(context),
+              onConfirm: () {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => BondsScreen()),
+                );
+              },
+              onCancel: () {
+                Navigator.pop(context);
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (_) => BondsScreen()),
+                );
+              },
             ),
           );
         }
@@ -462,7 +476,7 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                             child: TextFormField(
                               controller: gracePeriodNumberController,
                               keyboardType: TextInputType.number,
-                              decoration: const InputDecoration(labelText: 'Periodo de gracia'),
+                              decoration: const InputDecoration(labelText: 'Periodo de gracia' ),style: TextStyle(color: Colors.black)
                             ),
                           ),
                           const SizedBox(width: 10),

@@ -262,79 +262,102 @@ class _EditBondScreenState extends State<EditBondScreen> {
         child: Container(
           margin: const EdgeInsets.symmetric(vertical: 70),
           padding: const EdgeInsets.symmetric(horizontal: 40),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                FormTextField(label: 'Valor nominal', hintText: '', controller: nominalValueController, keyboardType: TextInputType.number),
-                const SizedBox(height: 20),
-                FormTextField(label: 'Valor comercial', hintText: '', controller: commercialValueController, keyboardType: TextInputType.number),
-                const SizedBox(height: 20),
-                FormTextField(label: 'Tasa cupón (%)', hintText: '', controller: couponRateController, keyboardType: TextInputType.number),
-                const SizedBox(height: 20),
-                FormTextField(label: 'Tasa de mercado (%)', hintText: '', controller: marketRateController, keyboardType: TextInputType.number),
-                const SizedBox(height: 20),
-                FormTextField(label: 'Plazo (periodos)', hintText: '', controller: periodsController, keyboardType: TextInputType.number),
-                const SizedBox(height: 20),
-                DropdownButtonFormField<int>(
-                  value: selectedCurrency,
-                  items: currencies.map((e) => DropdownMenuItem<int>(value: e['value'], child: Text(e['label']))).toList(),
-                  onChanged: (v) => setState(() => selectedCurrency = v),
-                  decoration: const InputDecoration(labelText: 'Moneda'),
-                ),
-                const SizedBox(height: 20),
-                DropdownButtonFormField<int>(
-                  value: selectedCuponRateType,
-                  items: cuponRateTypes.map((e) => DropdownMenuItem<int>(value: e['value'], child: Text(e['label']))).toList(),
-                  onChanged: (v) => setState(() => selectedCuponRateType = v),
-                  decoration: const InputDecoration(labelText: 'Tipo de Tasa'),
-                ),
-                const SizedBox(height: 20),
-                DropdownButtonFormField<int>(
-                  value: selectedCapitalizationType,
-                  items: capitalizationTypes.map((e) => DropdownMenuItem<int>(value: e['value'], child: Text(e['label']))).toList(),
-                  onChanged: (v) => setState(() => selectedCapitalizationType = v),
-                  decoration: const InputDecoration(labelText: 'Capitalización'),
-                ),
-                const SizedBox(height: 20),
-                // Periodos de gracia
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: gracePeriodNumberController,
-                        keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(labelText: 'Periodo de gracia'),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: DropdownButtonFormField<int>(
-                        value: selectedGraceType,
-                        items: [
-                          {'value': 0, 'label': 'Ninguno'},
-                          {'value': 1, 'label': 'Parcial'},
-                          {'value': 2, 'label': 'Total'},
-                        ].map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String))).toList(),
-                        onChanged: (int? v) => setState(() => selectedGraceType = v),
-                        decoration: const InputDecoration(labelText: 'Tipo de gracia'),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: _addGracePeriod,
-                    ),
-                  ],
-                ),
-                if (gracePeriods.isNotEmpty)
-                  Column(
-                    children: gracePeriods.map((gp) => ListTile(
-                      title: Text('Periodo: ${gp.period}, Tipo: ${gp.type}'),
-                    )).toList(),
+          child: DefaultTextStyle(
+            style: const TextStyle(color: Colors.black), // Fuerza texto negro por defecto
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  FormTextField(label: 'Valor nominal', hintText: '', controller: nominalValueController, keyboardType: TextInputType.number),
+                  const SizedBox(height: 20),
+                  FormTextField(label: 'Valor comercial', hintText: '', controller: commercialValueController, keyboardType: TextInputType.number),
+                  const SizedBox(height: 20),
+                  FormTextField(label: 'Tasa cupón (%)', hintText: '', controller: couponRateController, keyboardType: TextInputType.number),
+                  const SizedBox(height: 20),
+                  FormTextField(label: 'Tasa de mercado (%)', hintText: '', controller: marketRateController, keyboardType: TextInputType.number),
+                  const SizedBox(height: 20),
+                  FormTextField(label: 'Plazo (periodos)', hintText: '', controller: periodsController, keyboardType: TextInputType.number),
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<int>(
+                    value: selectedCurrency,
+                    items: currencies.map((e) => DropdownMenuItem<int>(value: e['value'], child: Text(e['label'], style: TextStyle(color: Colors.black)))).toList(),
+                    onChanged: (v) => setState(() => selectedCurrency = v),
+                    decoration: const InputDecoration(labelText: 'Moneda'),
+                    dropdownColor: Colors.white,
+                    style: const TextStyle(color: Colors.black),
+                    isExpanded: true,
                   ),
-                const SizedBox(height: 30),
-                CustomButton(label: 'Guardar Cambios', onPressed: _editBond, isStrong: true),
-              ],
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<int>(
+                    value: selectedCuponRateType,
+                    items: cuponRateTypes.map((e) => DropdownMenuItem<int>(value: e['value'], child: Text(e['label'], style: TextStyle(color: Colors.black)))).toList(),
+                    onChanged: (v) => setState(() => selectedCuponRateType = v),
+                    decoration: const InputDecoration(labelText: 'Tipo de Tasa'),
+                    dropdownColor: Colors.white,
+                    style: const TextStyle(color: Colors.black),
+                    isExpanded: true,
+                  ),
+                  const SizedBox(height: 20),
+                  DropdownButtonFormField<int>(
+                    value: selectedCapitalizationType,
+                    items: capitalizationTypes.map((e) => DropdownMenuItem<int>(value: e['value'], child: Text(e['label'], style: TextStyle(color: Colors.black)))).toList(),
+                    onChanged: (v) => setState(() => selectedCapitalizationType = v),
+                    decoration: const InputDecoration(labelText: 'Capitalización'),
+                    dropdownColor: Colors.white,
+                    style: const TextStyle(color: Colors.black),
+                    isExpanded: true,
+                  ),
+                  const SizedBox(height: 20),
+                  // Periodos de gracia
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: gracePeriodNumberController,
+                          keyboardType: TextInputType.number,
+                          decoration: const InputDecoration(labelText: 'Periodo de gracia'),
+                          style: const TextStyle(color: Colors.black),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: DropdownButtonFormField<int>(
+                          value: selectedGraceType,
+                          items: [
+                            {'value': 0, 'label': 'Ninguno'},
+                            {'value': 1, 'label': 'Parcial'},
+                            {'value': 2, 'label': 'Total'},
+                          ].map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String, style: TextStyle(color: Colors.black)))).toList(),
+                          onChanged: (int? v) => setState(() => selectedGraceType = v),
+                          decoration: const InputDecoration(labelText: 'Tipo de gracia'),
+                          dropdownColor: Colors.white,
+                          style: const TextStyle(color: Colors.black),
+                          isExpanded: true,
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: _addGracePeriod,
+                      ),
+                    ],
+                  ),
+                  if (gracePeriods.isNotEmpty)
+                    Column(
+                      children: gracePeriods.map((gp) => ListTile(
+                        title: Text('Periodo: ${gp.period}, Tipo: ${gp.type}'),
+                      )).toList(),
+                    ),
+                  const SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: CustomButton(
+                      label: 'Guardar Cambios',
+                      onPressed: _editBond,
+                      isStrong: true,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

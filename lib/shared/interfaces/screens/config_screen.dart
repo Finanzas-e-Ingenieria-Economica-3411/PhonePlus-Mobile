@@ -54,49 +54,69 @@ class _ConfigScreenState extends State<ConfigScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text('Moneda', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            DropdownButton<String>(
-              value: selectedCurrency,
-              items: currencies.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-              onChanged: (value) => setState(() => selectedCurrency = value),
-            ),
-            const SizedBox(height: 24),
-            const Text('Tipo de tasa de interés', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            DropdownButton<String>(
-              value: selectedRateType,
-              items: rateTypes.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-              onChanged: (value) => setState(() => selectedRateType = value),
-            ),
-            const SizedBox(height: 24),
-            if (selectedRateType == 'Nominal') ...[
-              const Text('Capitalización', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+        child: DefaultTextStyle(
+          style: const TextStyle(color: Colors.black), // Fuerza texto negro por defecto
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Moneda', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
               DropdownButton<String>(
-                value: selectedCapitalization,
-                items: capitalizations.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-                onChanged: (value) => setState(() => selectedCapitalization = value),
+                value: selectedCurrency,
+                dropdownColor: Colors.white,
+                style: const TextStyle(color: Colors.black, fontSize: 16),
+                iconEnabledColor: Colors.black,
+                items: currencies.map((e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e, style: const TextStyle(color: Colors.black)),
+                )).toList(),
+                onChanged: (value) => setState(() => selectedCurrency = value),
+              ),
+              const SizedBox(height: 24),
+              const Text('Tipo de tasa de interés', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+              DropdownButton<String>(
+                value: selectedRateType,
+                dropdownColor: Colors.white,
+                style: const TextStyle(color: Colors.black, fontSize: 16),
+                iconEnabledColor: Colors.black,
+                items: rateTypes.map((e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e, style: const TextStyle(color: Colors.black)),
+                )).toList(),
+                onChanged: (value) => setState(() => selectedRateType = value),
+              ),
+              const SizedBox(height: 24),
+              if (selectedRateType == 'Nominal') ...[
+                const Text('Capitalización', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+                DropdownButton<String>(
+                  value: selectedCapitalization,
+                  dropdownColor: Colors.white,
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                  iconEnabledColor: Colors.black,
+                  items: capitalizations.map((e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(e, style: const TextStyle(color: Colors.black)),
+                  )).toList(),
+                  onChanged: (value) => setState(() => selectedCapitalization = value),
+                ),
+              ],
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primary,
+                    foregroundColor: background,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: _saveConfig,
+                  child: const Text('Guardar configuración', style: TextStyle(fontSize: 18)),
+                ),
               ),
             ],
-            const Spacer(),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primary,
-                  foregroundColor: background,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                ),
-                onPressed: _saveConfig,
-                child: const Text('Guardar configuración', style: TextStyle(fontSize: 18)),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
-
