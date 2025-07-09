@@ -5,9 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0a121cf2-9775-46fe-af5d-dbdc8cf8f02e" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/lib/credits/domain/payment_plan.dto.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/credits/domain/payment_plan_request.dto.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/shared/interfaces/widgets/custom_drawer.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/app/intermediates/assets/debug/mergeDebugAssets/flutter_assets/kernel_blob.bin" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/intermediates/assets/debug/mergeDebugAssets/flutter_assets/kernel_blob.bin" afterDir="false" />
@@ -19,19 +16,9 @@
       <change beforePath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app-debug.apk" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app-debug.apk" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app-debug.apk.sha1" beforeDir="false" afterPath="$PROJECT_DIR$/build/app/outputs/flutter-apk/app-debug.apk.sha1" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/f872507f30e2ff2523f0f1d19160266e.cache.dill.track.dill" beforeDir="false" afterPath="$PROJECT_DIR$/build/f872507f30e2ff2523f0f1d19160266e.cache.dill.track.dill" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/credits/domain/bond_response.dto.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/credits/domain/bond_response.dto.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/credits/infrastructure/service/bond.service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/credits/infrastructure/service/bond.service.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/credits/interfaces/providers/bond_provider.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/credits/interfaces/providers/bond_provider.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/credits/interfaces/screens/bonds_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/credits/interfaces/screens/bonds_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/credits/interfaces/screens/details_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/credits/interfaces/screens/details_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/credits/interfaces/screens/new_plan_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/credits/interfaces/screens/new_plan_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/shared/infraestructure/service/base_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/shared/infraestructure/service/base_service.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/shared/interfaces/screens/buyer_welcome_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/shared/interfaces/screens/buyer_welcome_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/shared/interfaces/screens/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/shared/interfaces/screens/home_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/shared/interfaces/screens/seller_welcome_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/shared/interfaces/screens/seller_welcome_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/shared/interfaces/screens/welcome_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/shared/interfaces/screens/welcome_page.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/shared/interfaces/widgets/custom_bottom_navigation_bar.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/shared/interfaces/widgets/custom_bottom_navigation_bar.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/shared/interfaces/screens/config_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/shared/interfaces/screens/config_screen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

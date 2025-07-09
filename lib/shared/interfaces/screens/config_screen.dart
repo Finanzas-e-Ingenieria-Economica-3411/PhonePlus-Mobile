@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:phoneplus/credits/domain/payment_plan.dto.dart';
+import 'package:phoneplus/shared/infraestructure/helpers/storage_helper.dart';
+import 'package:phoneplus/shared/interfaces/screens/home_screen.dart';
 import 'package:phoneplus/ui/constants/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -11,8 +14,15 @@ class ConfigScreen extends StatefulWidget {
 
 class _ConfigScreenState extends State<ConfigScreen> {
   final List<String> currencies = ['PEN', 'USD', 'EUR']; //TODO: Add more currencies as needed
-  final List<String> rateTypes = ['Efectiva', 'Nominal'];
-  final List<String> capitalizations = ['Mensual', 'Bimestral', 'Trimestral', 'Semestral', 'Anual'];
+  final List<String> rateTypes = ['Efectiva', 'Nominal', "Descuento"];
+  final List<String> capitalizations = [ 'Cuatrimestral',
+    'Semestral',
+    'Anual',
+    'Bimestral',
+    'Mensual',
+    'Semanal',
+    'Diario'];
+
 
   String? selectedCurrency;
   String? selectedRateType;
@@ -111,6 +121,23 @@ class _ConfigScreenState extends State<ConfigScreen> {
                   ),
                   onPressed: _saveConfig,
                   child: const Text('Guardar configuración', style: TextStyle(fontSize: 18)),
+                ),
+              ),
+              const SizedBox(height: 15),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: background,
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  ),
+                  onPressed: () async{
+                    await StorageHelper.removeCredentials();
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+                  },
+                  child: const Text('Cerrar sesión', style: TextStyle(fontSize: 18)),
                 ),
               ),
             ],

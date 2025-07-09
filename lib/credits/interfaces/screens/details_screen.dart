@@ -3,9 +3,12 @@ import 'package:phoneplus/core/helpers/date_time_helper.dart';
 import 'package:phoneplus/credits/domain/bond_response.dto.dart';
 import 'package:phoneplus/credits/interfaces/screens/new_plan_screen.dart';
 import 'package:phoneplus/shared/infraestructure/helpers/storage_helper.dart';
+import 'package:phoneplus/shared/interfaces/widgets/form_text_field.dart';
 import 'package:phoneplus/ui/constants/constant.dart';
-import 'package:provider/provider.dart' show Provider, WatchContext;
+import 'package:provider/provider.dart' show Provider, ReadContext, WatchContext;
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../domain/payment_plan.dto.dart';
 import '../providers/bond_provider.dart';
 import 'edit_bond_screen.dart';
 
@@ -20,6 +23,126 @@ class DetailsScreen extends StatefulWidget {
 class _DetailsScreenState extends State<DetailsScreen> {
   bool isMine = false;
   String role = "";
+  late TextEditingController cokController;
+
+  String? selectedCurrency;
+  String? selectedRateType;
+  String? selectedCapitalization;
+  String? selectedFrequency;
+  PaymentPlanDto? plan;
+  final List<String> rateTypes = ['Efectiva', 'Nominal', "Descuento"];
+  final List<String> capitalizations = [ 'Cuatrimestral',
+    'Semestral',
+    'Anual',
+    'Bimestral',
+    'Mensual',
+    'Semanal',
+    'Diario'];
+
+  final Map<String, int> frequencyDescriptionToValue = {
+    'Bimestral': 1,
+    'Trimestral': 2,
+    'Anual': 3,
+    'Quincenal': 4,
+    'Mensual': 5,
+    'Cuatrimestral': 6,
+    'Semestral': 7,
+  };
+
+
+  final List<String> frequencies= [
+    'Bimestral',
+    'Trimestral',
+    'Anual',
+    'Quincenal',
+    'Mensual',
+    'Cuatrimestral',
+    'Semestral',
+  ];
+
+
+  Map<String, int> rates = {
+     "Efectiva": 1,
+     "Nominal": 2,
+    "Descuento": 3
+  };
+
+  Map<String,int> capitalizationTypesMap = {
+    'Cuatrimestral': 1,
+    'Semestral':2,
+    'Anual':3,
+    'Bimestral':4,
+    'Mensual':5,
+    'Semanal':6,
+    'Diario':7,
+  };
+
+
+
+
+  Future<void> _loadConfig() async {
+    setState(() {
+      selectedRateType = rateTypes[0];
+      selectedCapitalization = capitalizations[0];
+      selectedFrequency = frequencies[0];
+    });
+  }
+
+  Future<void> calculatePaymentPlan(BuildContext context) async {
+    if (cokController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor ingresa el valor futuro (COK)')),
+      );
+      return;
+    }
+
+    final bondProvider = context.read<BondProvider>();
+    final cokType = rates[selectedRateType];
+    final cokFrequency = frequencyDescriptionToValue[selectedFrequency];
+    final cokCapitalization = capitalizationTypesMap[selectedCapitalization];
+
+    if (cokType == null || cokFrequency == null || cokCapitalization == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error en la configuración seleccionada')),
+      );
+      return;
+    }
+
+    try {
+      await bondProvider.calculatePaymentPlan(
+          widget.bondResponseDto.id!,
+          double.parse(cokController.text),
+          cokType,
+          cokFrequency,
+          cokCapitalization
+      );
+
+      if (mounted) {
+        setState(() {
+          plan = bondProvider.paymentPlans;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al calcular el plan: $e')),
+        );
+      }
+    }
+  }
+
+  @override
+  void initState(){
+    super.initState();
+     cokController = TextEditingController();
+    _loadConfig();
+  }
+
+  @override
+  void dispose(){
+    super.dispose();
+    cokController.dispose();
+  }
   @override
   void didChangeDependencies(){
     super.didChangeDependencies();
@@ -30,7 +153,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
       setState(() {
         role = currentRole!;
       });
-      if (currentRole == "Emisor"){
+      if (role == "Emisor"){
         Future.microtask(() => Provider.of<BondProvider>(context,listen:false).calculatePaymentPlan(widget.bondResponseDto.id!,0,0,0,0));
       }
       setState(() {
@@ -143,6 +266,81 @@ class _DetailsScreenState extends State<DetailsScreen> {
             ),
 
             const SizedBox(height: 20),
+
+            if (role == "Inversionista")
+               Padding(
+                 padding: const EdgeInsets.all(20),
+                 child: Column(
+                   crossAxisAlignment: CrossAxisAlignment.start,
+                   mainAxisAlignment: MainAxisAlignment.start,
+                   children: [
+                     FormTextField(
+                         label: "Valor futuro",
+                         hintText: "Ingresa valor futuro",
+                         controller: cokController
+                     ),
+                   const SizedBox(height: 24),
+                   const Text('Tipo de tasa de interés', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+                   DropdownButton<String>(
+                     value: selectedRateType,
+                     dropdownColor: Colors.white,
+                     style: const TextStyle(color: Colors.black, fontSize: 16),
+                     iconEnabledColor: Colors.black,
+                     items: rateTypes.map((e) => DropdownMenuItem(
+                       value: e,
+                       child: Text(e, style: const TextStyle(color: Colors.black)),
+                     )).toList(),
+                     onChanged: (value) => setState(() => selectedRateType = value),
+                   ),
+                   const SizedBox(height: 24),
+                   const Text('Capitalización', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+                  DropdownButton<String>(
+                  value: selectedCapitalization,
+                  dropdownColor: Colors.white,
+                  style: const TextStyle(color: Colors.black, fontSize: 16),
+                  iconEnabledColor: Colors.black,
+                  items: capitalizations.map((e) => DropdownMenuItem(
+                  value: e,
+                  child: Text(e,
+                      style: const TextStyle(color: Colors.black)),)).toList(),
+                  onChanged: (value) =>
+                      setState(() =>
+                      selectedCapitalization = value),
+                      ),
+                     const SizedBox(height: 24),
+                     const Text('Frequencia', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+                     DropdownButton<String>(
+                       value: selectedFrequency,
+                       dropdownColor: Colors.white,
+                       style: const TextStyle(color: Colors.black, fontSize: 16),
+                       iconEnabledColor: Colors.black,
+                       items: frequencies.map((e) => DropdownMenuItem(
+                         value: e,
+                         child: Text(e,
+                             style: const TextStyle(color: Colors.black)),)).toList(),
+                       onChanged: (value) =>
+                           setState(() =>
+                           selectedFrequency = value),
+                     ),
+                     const SizedBox(height: 24),
+                     SizedBox(
+                       width: double.infinity,
+                       child: ElevatedButton(
+                         style: ElevatedButton.styleFrom(
+                           backgroundColor: primary,
+                           foregroundColor: background,
+                           padding: const EdgeInsets.symmetric(vertical: 16),
+                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                         ),
+                         onPressed: () async{
+                           await calculatePaymentPlan(context);
+                         },
+                         child: const Text('Calcular plan de pago', style: TextStyle(fontSize: 18)),
+                       ),
+                     ),
+                   ],
+                 ),
+               ),
             // Details Info
             Expanded(
               child: Container(
@@ -177,21 +375,21 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       const SizedBox(height: 12),
                       _buildDetailRow('N° de operación:', widget.bondResponseDto.id?.toString() ?? "-"),
                       const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('TCEA:', bondProvider.paymentPlans.tcea?.toStringAsFixed(4) ?? "-", 'Tasa de Costo Efectivo Anual (emisor): mide el costo total anual del bono para el emisor.'),
+                      _buildDetailRowWithInfo('TCEA:', plan != null ? plan?.tcea?.toStringAsFixed(4) ?? "-" : "-", 'Tasa de Costo Efectivo Anual (emisor): mide el costo total anual del bono para el emisor.'),
                       const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('TREA:',bondProvider.paymentPlans.trea?.toStringAsFixed(4) ?? "-", 'Tasa de Rendimiento Efectivo Anual (bonista): mide el rendimiento anual real para el inversionista.'),
+                      _buildDetailRowWithInfo('TREA:', plan != null ? plan?.trea?.toStringAsFixed(4) ?? "-" :"-", 'Tasa de Rendimiento Efectivo Anual (bonista): mide el rendimiento anual real para el inversionista.'),
                       const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('Duración:', bondProvider.paymentPlans.duration?.toStringAsFixed(4) ?? "-", 'Duración: mide el plazo promedio ponderado de los flujos de caja del bono.'),
+                      _buildDetailRowWithInfo('Duración:',plan != null ? plan?.duration?.toStringAsFixed(4) ?? "-" :"-", 'Duración: mide el plazo promedio ponderado de los flujos de caja del bono.'),
                       const SizedBox(height: 12),
                       _buildDetailRowWithInfo('Duración Modificada:', widget.bondResponseDto.modifiedDuration?.toStringAsFixed(4) ?? "-", 'Duración modificada: mide la sensibilidad del precio del bono ante cambios en la tasa de interés.'),
                       const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('Convexidad:', bondProvider.paymentPlans.convexity?.toStringAsFixed(4) ?? "-", 'Convexidad: mide la curvatura de la relación precio-tasa de interés del bono.'),
+                      _buildDetailRowWithInfo('Convexidad:', plan != null ? plan?.convexity?.toStringAsFixed(4) ?? "-":"-", 'Convexidad: mide la curvatura de la relación precio-tasa de interés del bono.'),
                       const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('Precio Máximo:', bondProvider.paymentPlans.maxMarketPrice?.toStringAsFixed(2) ?? "-", 'Precio máximo: precio máximo que el inversionista debería pagar para que el bono sea rentable.'),
+                      _buildDetailRowWithInfo('Precio Máximo:',plan != null ? plan?.maxMarketPrice?.toStringAsFixed(2) ?? "-":"-", 'Precio máximo: precio máximo que el inversionista debería pagar para que el bono sea rentable.'),
                       const SizedBox(height: 20),
 
                       // Cash Flow Table
-                      if (bondProvider.paymentPlans != null && bondProvider.paymentPlans.cashFlows!.isNotEmpty)
+                      if (plan != null && plan!.cashFlows!.isNotEmpty)
                         Container(
                           decoration: BoxDecoration(
                             color: const Color(0xFF4A7C59),
@@ -231,7 +429,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                   ),
                                 ],
                               ),
-                              ...bondProvider.paymentPlans.cashFlows!.asMap().entries.map((entry) {
+                              ...plan!.cashFlows!.asMap().entries.map((entry) {
                                 final i = entry.key;
                                 final value = entry.value;
                                 return TableRow(

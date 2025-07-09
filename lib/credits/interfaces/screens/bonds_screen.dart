@@ -22,15 +22,17 @@ class _BondsScreenState extends State<BondsScreen> {
     super.didChangeDependencies();
     ()async{
       final currentRole = await StorageHelper.getRole();
+      print(currentRole);
       setState(() {
         role = currentRole!;
       });
+
+      if (role == "Inversionista"){
+        Future.microtask(() => Provider.of<BondProvider>(context, listen: false).getAvailableBonds());
+      } else{
+        Future.microtask(() => Provider.of<BondProvider>(context, listen: false).getMyBonds());
+      }
     }();
-    if (role == "Inversionista"){
-      Future.microtask(() => Provider.of<BondProvider>(context, listen: false).getAvailableBonds());
-    } else{
-      Future.microtask(() => Provider.of<BondProvider>(context, listen: false).getMyBonds());
-    }
   }
 
   @override
