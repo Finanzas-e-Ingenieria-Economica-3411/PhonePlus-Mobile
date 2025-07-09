@@ -19,8 +19,6 @@ class BondRequest with Serializable {
   int? frequencies;
   int? dayPerYear;
   int? capitalizationTypes;
-  int? yearDiscount;
-  double? rentImport;
   int? userId;
   double? cuponRate;
   int? cuponRateType;
@@ -41,8 +39,6 @@ class BondRequest with Serializable {
     this.frequencies,
     this.dayPerYear,
     this.capitalizationTypes,
-    this.yearDiscount,
-    this.rentImport,
     this.userId,
     this.cuponRate,
     this.cuponRateType,
@@ -66,8 +62,6 @@ class BondRequest with Serializable {
       'Frequencies': frequencies,
       'DayPerYear': dayPerYear,
       'CapitalizationTypes': capitalizationTypes,
-      'YearDiscount': yearDiscount,
-      'RentImport': rentImport,
       'UserId': userId,
       'CuponRate': cuponRate,
       'CuponRateType': cuponRateType,

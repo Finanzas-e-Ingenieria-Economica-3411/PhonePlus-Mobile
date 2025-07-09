@@ -185,7 +185,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     "${firstNameController.text} ${lastNameController.text}",
                                     userController.text,
                                     dniController.text,
-                                    isSeller ? 3 : 2
+                                    isSeller ? 1 : 2 // Cambiado: 1 para emisor, 2 para inversor
                                 );
                                 await showDialog(
                                     context: context,

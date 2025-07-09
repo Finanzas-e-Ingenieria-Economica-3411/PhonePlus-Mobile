@@ -16,23 +16,25 @@ class BondsScreen extends StatefulWidget {
 class _BondsScreenState extends State<BondsScreen> {
   int? selectedBondIndex;
   String role = "";
+  bool _isLoaded = false; // Flag para evitar requests múltiples
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    ()async{
-      final currentRole = await StorageHelper.getRole();
-      print(currentRole);
-      setState(() {
-        role = currentRole!;
-      });
-
-      if (role == "Inversionista"){
-        Future.microtask(() => Provider.of<BondProvider>(context, listen: false).getAvailableBonds());
-      } else{
-        Future.microtask(() => Provider.of<BondProvider>(context, listen: false).getMyBonds());
-      }
-    }();
+    if (!_isLoaded) {
+      _isLoaded = true;
+      () async {
+        final currentRole = await StorageHelper.getRole();
+        setState(() {
+          role = currentRole!;
+        });
+        if (role == "Inversionista") {
+          await Provider.of<BondProvider>(context, listen: false).getAvailableBonds();
+        } else {
+          await Provider.of<BondProvider>(context, listen: false).getMyBonds();
+        }
+      }();
+    }
   }
 
   @override
@@ -122,7 +124,7 @@ class _BondsScreenState extends State<BondsScreen> {
                       child: Column(
                         children: [
                           Text(
-                            'Bono del ${bond.issuerName ?? "-"}',
+                            'Bono de ${bond.issuerName ?? "-"}',
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -144,14 +146,6 @@ class _BondsScreenState extends State<BondsScreen> {
                               color: Colors.white,
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Fecha de emisión: ${bond.issueDate != null ? normalizeDate(bond.issueDate!) : "-"}',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
                             ),
                           ),
                         ],

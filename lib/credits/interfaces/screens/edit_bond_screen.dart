@@ -36,7 +36,6 @@ class _EditBondScreenState extends State<EditBondScreen> {
   late TextEditingController cavaliFeeController;
   late TextEditingController redemptionPremiumController;
   late TextEditingController gracePeriodsController;
-  late TextEditingController issueDateController;
 
   // Dropdown lists
   final List<Map<String, dynamic>> currencies = [
@@ -156,7 +155,6 @@ class _EditBondScreenState extends State<EditBondScreen> {
     flotationFeeController = TextEditingController(text: b.flotationFee?.toString() ?? '');
     cavaliFeeController = TextEditingController(text: b.cavaliFee?.toString() ?? '');
     redemptionPremiumController = TextEditingController(text: b.redemptionPremium?.toString() ?? '');
-    issueDateController = TextEditingController(text: b.issueDate != null ? normalizeDate(b.issueDate!) : '');
     gracePeriodsController = TextEditingController();
     _loadConfigFromPrefs();
     selectedGraceType = 0;
@@ -193,7 +191,6 @@ class _EditBondScreenState extends State<EditBondScreen> {
     cavaliFeeController.dispose();
     redemptionPremiumController.dispose();
     gracePeriodsController.dispose();
-    issueDateController.dispose();
     gracePeriodNumberController.dispose();
     super.dispose();
   }
@@ -213,8 +210,6 @@ class _EditBondScreenState extends State<EditBondScreen> {
         frequencies: 1, // Puedes agregar un dropdown si lo necesitas
         dayPerYear: 360,
         capitalizationTypes: selectedCapitalizationType,
-        yearDiscount: 0,
-        rentImport: 0,
         userId: widget.bond.userId,
         cuponRate: double.tryParse(couponRateController.text),
         cuponRateType: selectedCuponRateType,

@@ -32,7 +32,6 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
   final TextEditingController yearDiscountController = TextEditingController();
   final TextEditingController rentImportController = TextEditingController();
   final TextEditingController cuponRateController = TextEditingController();
-  final TextEditingController issueDateController = TextEditingController();
 
   // Enums y listas
   final List<Map<String, dynamic>> currencies = [
@@ -167,22 +166,8 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
     yearDiscountController.dispose();
     rentImportController.dispose();
     cuponRateController.dispose();
-    issueDateController.dispose();
     gracePeriodNumberController.dispose();
     super.dispose();
-  }
-
-  Future<void> _selectDate(BuildContext context) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-      locale: const Locale('es', ''),
-    );
-    if (picked != null) {
-      issueDateController.text = "${picked.day.toString().padLeft(2, '0')}/${picked.month.toString().padLeft(2, '0')}/${picked.year}";
-    }
   }
 
   void _addGracePeriod() {
@@ -213,8 +198,6 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
         frequencies: selectedFrequency,
         dayPerYear: 360,
         capitalizationTypes: selectedCapitalizationType,
-        yearDiscount: int.tryParse(yearDiscountController.text) ?? 0,
-        rentImport: double.tryParse(rentImportController.text) ?? 0,
         userId: userId,
         cuponRate: double.tryParse(cuponRateController.text),
         cuponRateType: selectedCuponRateType,
@@ -279,7 +262,6 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
     yearDiscountController.clear();
     rentImportController.clear();
     cuponRateController.clear();
-    issueDateController.clear();
     gracePeriodNumberController.clear();
     setState(() {
       selectedCurrency = currencies[0]['value'];
@@ -378,32 +360,10 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                     ),
                     const SizedBox(height: 20),
                     FormTextField(
-                      label: 'Descuento anual (%)',
-                      hintText: 'Ingrese el descuento anual',
-                      controller: yearDiscountController,
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 20),
-                    FormTextField(
-                      label: 'Importe de renta',
-                      hintText: 'Ingrese el importe de renta',
-                      controller: rentImportController,
-                      keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 20),
-                    FormTextField(
                       label: 'Tasa cupón (%)',
                       hintText: 'Ingrese la tasa cupón',
                       controller: cuponRateController,
                       keyboardType: TextInputType.number,
-                    ),
-                    const SizedBox(height: 20),
-                    FormTextField(
-                      label: 'Fecha de emisión',
-                      hintText: 'Seleccione la fecha',
-                      controller: issueDateController,
-                      readOnly: true,
-                      onTap: () => _selectDate(context),
                     ),
                     const SizedBox(height: 20),
                     // Dropdowns

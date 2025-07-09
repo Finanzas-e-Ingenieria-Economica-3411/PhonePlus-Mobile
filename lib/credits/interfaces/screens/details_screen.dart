@@ -24,6 +24,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
   bool isMine = false;
   String role = "";
   late TextEditingController cokController;
+  bool _isLoaded = false;
 
   String? selectedCurrency;
   String? selectedRateType;
@@ -91,7 +92,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
   Future<void> calculatePaymentPlan(BuildContext context) async {
     if (cokController.text.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor ingresa el valor futuro (COK)')),
+        const SnackBar(content: Text('Por favor ingresa el costo de oportunidad (COK)')),
       );
       return;
     }
@@ -146,20 +147,38 @@ class _DetailsScreenState extends State<DetailsScreen> {
   @override
   void didChangeDependencies(){
     super.didChangeDependencies();
-    ()async{
-      final userId = await StorageHelper.getUserId();
-      final result = userId == widget.bondResponseDto.userId ? true : false;
-      final currentRole = await StorageHelper.getRole();
-      setState(() {
-        role = currentRole!;
-      });
-      if (role == "Emisor"){
-        Future.microtask(() => Provider.of<BondProvider>(context,listen:false).calculatePaymentPlan(widget.bondResponseDto.id!,0,0,0,0));
-      }
-      setState(() {
-        isMine = result;
-      });
-    }();
+    if (!_isLoaded) {
+      _isLoaded = true;
+      ()async{
+        final userId = await StorageHelper.getUserId();
+        final result = userId == widget.bondResponseDto.userId ? true : false;
+        final currentRole = await StorageHelper.getRole();
+        setState(() {
+          role = currentRole!;
+        });
+        if (role == "Emisor"){
+          // Usar valores por defecto para el cálculo inicial
+          final cokType = 0;
+          final cokFrequency = 0;
+          final cokCapitalization = 0;
+          await Provider.of<BondProvider>(context,listen:false).calculatePaymentPlan(
+            widget.bondResponseDto.id!,
+            0,
+            cokType,
+            cokFrequency,
+            cokCapitalization
+          );
+          if (mounted) {
+            setState(() {
+              plan = Provider.of<BondProvider>(context, listen: false).paymentPlans;
+            });
+          }
+        }
+        setState(() {
+          isMine = result;
+        });
+      }();
+    }
   }
 
   @override
@@ -168,182 +187,174 @@ class _DetailsScreenState extends State<DetailsScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: SafeArea(
-        child: Column(
-          children: [
-            // Header
-            Container(
-              margin: const EdgeInsets.all(16),
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(25),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.1),
-                    spreadRadius: 1,
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Text(
-                    'Detalles',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              // Header
+              Container(
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.1),
+                      spreadRadius: 1,
+                      blurRadius: 10,
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF4A7C59),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: const Icon(
-                      Icons.person,
-                      color: Colors.white,
-                      size: 20,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 16),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: const Color(0xFF4A7C59),
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 1,
-                    blurRadius: 5,
-                  ),
-                ],
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    'Bono del ${widget.bondResponseDto.issuerName ?? "-"}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.bondResponseDto.username ?? "-",
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Valor nominal: ${widget.bondResponseDto.nominalValue ?? "-"}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Fecha de emisión: ${widget.bondResponseDto.issueDate != null ? normalizeDate(widget.bondResponseDto.issueDate!) : "-"}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 20),
-
-            if (role == "Inversionista")
-               Padding(
-                 padding: const EdgeInsets.all(20),
-                 child: Column(
-                   crossAxisAlignment: CrossAxisAlignment.start,
-                   mainAxisAlignment: MainAxisAlignment.start,
-                   children: [
-                     FormTextField(
-                         label: "Valor futuro",
-                         hintText: "Ingresa valor futuro",
-                         controller: cokController
-                     ),
-                   const SizedBox(height: 24),
-                   const Text('Tipo de tasa de interés', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
-                   DropdownButton<String>(
-                     value: selectedRateType,
-                     dropdownColor: Colors.white,
-                     style: const TextStyle(color: Colors.black, fontSize: 16),
-                     iconEnabledColor: Colors.black,
-                     items: rateTypes.map((e) => DropdownMenuItem(
-                       value: e,
-                       child: Text(e, style: const TextStyle(color: Colors.black)),
-                     )).toList(),
-                     onChanged: (value) => setState(() => selectedRateType = value),
-                   ),
-                   const SizedBox(height: 24),
-                   const Text('Capitalización', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
-                  DropdownButton<String>(
-                  value: selectedCapitalization,
-                  dropdownColor: Colors.white,
-                  style: const TextStyle(color: Colors.black, fontSize: 16),
-                  iconEnabledColor: Colors.black,
-                  items: capitalizations.map((e) => DropdownMenuItem(
-                  value: e,
-                  child: Text(e,
-                      style: const TextStyle(color: Colors.black)),)).toList(),
-                  onChanged: (value) =>
-                      setState(() =>
-                      selectedCapitalization = value),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text(
+                      'Detalles',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
                       ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF4A7C59),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Icon(
+                        Icons.person,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4A7C59),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      'Bono de ${widget.bondResponseDto.issuerName ?? "-"}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      widget.bondResponseDto.username ?? "-",
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Valor nominal: ${widget.bondResponseDto.nominalValue ?? "-"}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              if (role == "Inversionista")
+                 Padding(
+                   padding: const EdgeInsets.all(20),
+                   child: Column(
+                     crossAxisAlignment: CrossAxisAlignment.start,
+                     mainAxisAlignment: MainAxisAlignment.start,
+                     children: [
+                       FormTextField(
+                           label: "Costo de Oportunidad (COK)",
+                           hintText: "Ingresa el COK",
+                           controller: cokController
+                       ),
                      const SizedBox(height: 24),
-                     const Text('Frequencia', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+                     const Text('Tipo de tasa de interés', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
                      DropdownButton<String>(
-                       value: selectedFrequency,
+                       value: selectedRateType,
                        dropdownColor: Colors.white,
                        style: const TextStyle(color: Colors.black, fontSize: 16),
                        iconEnabledColor: Colors.black,
-                       items: frequencies.map((e) => DropdownMenuItem(
+                       items: rateTypes.map((e) => DropdownMenuItem(
                          value: e,
-                         child: Text(e,
-                             style: const TextStyle(color: Colors.black)),)).toList(),
-                       onChanged: (value) =>
-                           setState(() =>
-                           selectedFrequency = value),
+                         child: Text(e, style: const TextStyle(color: Colors.black)),
+                       )).toList(),
+                       onChanged: (value) => setState(() => selectedRateType = value),
                      ),
                      const SizedBox(height: 24),
-                     SizedBox(
-                       width: double.infinity,
-                       child: ElevatedButton(
-                         style: ElevatedButton.styleFrom(
-                           backgroundColor: primary,
-                           foregroundColor: background,
-                           padding: const EdgeInsets.symmetric(vertical: 16),
-                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                         ),
-                         onPressed: () async{
-                           await calculatePaymentPlan(context);
-                         },
-                         child: const Text('Calcular plan de pago', style: TextStyle(fontSize: 18)),
+                     const Text('Capitalización', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+                    DropdownButton<String>(
+                    value: selectedCapitalization,
+                    dropdownColor: Colors.white,
+                    style: const TextStyle(color: Colors.black, fontSize: 16),
+                    iconEnabledColor: Colors.black,
+                    items: capitalizations.map((e) => DropdownMenuItem(
+                    value: e,
+                    child: Text(e,
+                        style: const TextStyle(color: Colors.black)),)).toList(),
+                    onChanged: (value) =>
+                        setState(() =>
+                        selectedCapitalization = value),
+                        ),
+                       const SizedBox(height: 24),
+                       const Text('Frequencia', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.black)),
+                       DropdownButton<String>(
+                         value: selectedFrequency,
+                         dropdownColor: Colors.white,
+                         style: const TextStyle(color: Colors.black, fontSize: 16),
+                         iconEnabledColor: Colors.black,
+                         items: frequencies.map((e) => DropdownMenuItem(
+                           value: e,
+                           child: Text(e,
+                               style: const TextStyle(color: Colors.black)),)).toList(),
+                         onChanged: (value) =>
+                             setState(() =>
+                             selectedFrequency = value),
                        ),
-                     ),
-                   ],
+                       const SizedBox(height: 24),
+                       SizedBox(
+                         width: double.infinity,
+                         child: ElevatedButton(
+                           style: ElevatedButton.styleFrom(
+                             backgroundColor: primary,
+                             foregroundColor: background,
+                             padding: const EdgeInsets.symmetric(vertical: 16),
+                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                           ),
+                           onPressed: () async{
+                             await calculatePaymentPlan(context);
+                           },
+                           child: const Text('Calcular plan de pago', style: TextStyle(fontSize: 18)),
+                         ),
+                       ),
+                     ],
+                   ),
                  ),
-               ),
-            // Details Info
-            Expanded(
-              child: Container(
+              // Details Info
+              Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -357,129 +368,123 @@ class _DetailsScreenState extends State<DetailsScreen> {
                     ),
                   ],
                 ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildDetailRow('Nombre:', 'Bono del ${widget.bondResponseDto.issuerName ?? "-"}'),
-                      const SizedBox(height: 12),
-                      _buildDetailRow('Valor nominal:', '${widget.bondResponseDto.nominalValue ?? "-"}'),
-                      const SizedBox(height: 12),
-                      _buildDetailRow('Valor comercial:', '${widget.bondResponseDto.commercialValue ?? "-"}'),
-                      const SizedBox(height: 12),
-                      _buildDetailRow('Tasa cupón:', '${widget.bondResponseDto.couponRate ?? "-"}'),
-                      const SizedBox(height: 12),
-                      _buildDetailRow('Tasa de mercado:', '${widget.bondResponseDto.marketRate ?? "-"}'),
-                      const SizedBox(height: 12),
-                      _buildDetailRow('Fecha de emisión:', widget.bondResponseDto.issueDate != null ? normalizeDate(widget.bondResponseDto.issueDate!) : "-"),
-                      const SizedBox(height: 12),
-                      _buildDetailRow('N° de operación:', widget.bondResponseDto.id?.toString() ?? "-"),
-                      const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('TCEA:', plan != null ? plan?.tcea?.toStringAsFixed(4) ?? "-" : "-", 'Tasa de Costo Efectivo Anual (emisor): mide el costo total anual del bono para el emisor.'),
-                      const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('TREA:', plan != null ? plan?.trea?.toStringAsFixed(4) ?? "-" :"-", 'Tasa de Rendimiento Efectivo Anual (bonista): mide el rendimiento anual real para el inversionista.'),
-                      const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('Duración:',plan != null ? plan?.duration?.toStringAsFixed(4) ?? "-" :"-", 'Duración: mide el plazo promedio ponderado de los flujos de caja del bono.'),
-                      const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('Duración Modificada:', widget.bondResponseDto.modifiedDuration?.toStringAsFixed(4) ?? "-", 'Duración modificada: mide la sensibilidad del precio del bono ante cambios en la tasa de interés.'),
-                      const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('Convexidad:', plan != null ? plan?.convexity?.toStringAsFixed(4) ?? "-":"-", 'Convexidad: mide la curvatura de la relación precio-tasa de interés del bono.'),
-                      const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('Precio Máximo:',plan != null ? plan?.maxMarketPrice?.toStringAsFixed(2) ?? "-":"-", 'Precio máximo: precio máximo que el inversionista debería pagar para que el bono sea rentable.'),
-                      const SizedBox(height: 20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildDetailRow('Nombre:', 'Bono de ${widget.bondResponseDto.issuerName ?? "-"}'),
+                    const SizedBox(height: 12),
+                    _buildDetailRow('Valor nominal:', '${widget.bondResponseDto.nominalValue ?? "-"}'),
+                    const SizedBox(height: 12),
+                    _buildDetailRow('Valor comercial:', '${widget.bondResponseDto.commercialValue ?? "-"}'),
+                    const SizedBox(height: 12),
+                    _buildDetailRow('Tasa cupón:', '${widget.bondResponseDto.couponRate ?? "-"}'),
+                    const SizedBox(height: 12),
+                    _buildDetailRow('N° de operación:', widget.bondResponseDto.id?.toString() ?? "-"),
+                    const SizedBox(height: 12),
+                    _buildDetailRowWithInfo('TCEA:', plan != null ? plan?.tcea?.toStringAsFixed(4) ?? "-" : "-", 'Tasa de Costo Efectivo Anual (emisor): mide el costo total anual del bono para el emisor.'),
+                    const SizedBox(height: 12),
+                    _buildDetailRowWithInfo('TREA:', plan != null ? plan?.trea?.toStringAsFixed(4) ?? "-" :"-", 'Tasa de Rendimiento Efectivo Anual (bonista): mide el rendimiento anual real para el inversionista.'),
+                    const SizedBox(height: 12),
+                    _buildDetailRowWithInfo('Duración:',plan != null ? plan?.duration?.toStringAsFixed(4) ?? "-" :"-", 'Duración: mide el plazo promedio ponderado de los flujos de caja del bono.'),
+                    const SizedBox(height: 12),
+                    _buildDetailRowWithInfo('Duración Modificada:', plan != null && plan?.modifiedDuration != null ? plan!.modifiedDuration!.toStringAsFixed(4) : "-", 'Duración modificada: mide la sensibilidad del precio del bono ante cambios en la tasa de interés.'),
+                    const SizedBox(height: 12),
+                    _buildDetailRowWithInfo('Convexidad:', plan != null ? plan?.convexity?.toStringAsFixed(4) ?? "-":"-", 'Convexidad: mide la curvatura de la relación precio-tasa de interés del bono.'),
+                    const SizedBox(height: 12),
+                    _buildDetailRowWithInfo('Precio Máximo:',plan != null ? plan?.maxMarketPrice?.toStringAsFixed(2) ?? "-":"-", 'Precio máximo: precio máximo que el inversionista debería pagar para que el bono sea rentable.'),
+                    const SizedBox(height: 20),
 
-                      // Cash Flow Table
-                      if (plan != null && plan!.cashFlows!.isNotEmpty)
-                        Container(
-                          decoration: BoxDecoration(
-                            color: const Color(0xFF4A7C59),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Table(
-                            children: [
-                              const TableRow(
+                    // Cash Flow Table
+                    if (plan != null && plan!.cashFlows!.isNotEmpty)
+                      Container(
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4A7C59),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Table(
+                          children: [
+                            const TableRow(
+                              children: [
+                                TableCell(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      '#Periodo',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                                TableCell(
+                                  child: Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: Text(
+                                      'Flujo',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 12,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            ...plan!.cashFlows!.asMap().entries.map((entry) {
+                              final i = entry.key;
+                              final value = entry.value;
+                              return TableRow(
                                 children: [
                                   TableCell(
                                     child: Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Text(
-                                        '#Periodo',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text('${i + 1}', textAlign: TextAlign.center, style: const TextStyle(color: Colors.white)),
                                     ),
                                   ),
                                   TableCell(
                                     child: Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: Text(
-                                        'Flujo',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12,
-                                        ),
-                                        textAlign: TextAlign.center,
-                                      ),
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(value.toString(), textAlign: TextAlign.center, style: const TextStyle(color: Colors.white)),
                                     ),
                                   ),
                                 ],
-                              ),
-                              ...plan!.cashFlows!.asMap().entries.map((entry) {
-                                final i = entry.key;
-                                final value = entry.value;
-                                return TableRow(
-                                  children: [
-                                    TableCell(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text('${i + 1}', textAlign: TextAlign.center, style: const TextStyle(color: Colors.white)),
-                                      ),
-                                    ),
-                                    TableCell(
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Text(value.toString(), textAlign: TextAlign.center, style: const TextStyle(color: Colors.white)),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              }).toList(),
-                            ],
-                          ),
-                        ),
-                      role == "Emisor" ? Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        child: SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF4A7C59),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => EditBondScreen(bond: widget.bondResponseDto),
-                                ),
                               );
-                            },
-                            child: const Text('Editar Bono', style: TextStyle(fontSize: 16)),
-                          ),
+                            }).toList(),
+                          ],
                         ),
-                      ) : Container(),
-                    ],
-                  ),
+                      ),
+                    role == "Emisor" ? Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF4A7C59),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => EditBondScreen(bond: widget.bondResponseDto),
+                              ),
+                            );
+                          },
+                          child: const Text('Editar Bono', style: TextStyle(fontSize: 16)),
+                        ),
+                      ),
+                    ) : Container(),
+                  ],
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
