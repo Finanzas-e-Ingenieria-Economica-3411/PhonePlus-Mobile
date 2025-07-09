@@ -3,15 +3,45 @@ import 'package:phoneplus/core/helpers/date_time_helper.dart';
 import 'package:phoneplus/credits/domain/bond_response.dto.dart';
 import 'package:phoneplus/credits/interfaces/screens/new_plan_screen.dart';
 import 'package:phoneplus/shared/infraestructure/helpers/storage_helper.dart';
+import 'package:phoneplus/ui/constants/constant.dart';
+import 'package:provider/provider.dart' show Provider, WatchContext;
 
+import '../providers/bond_provider.dart';
 import 'edit_bond_screen.dart';
 
-class DetailsScreen extends StatelessWidget {
+class DetailsScreen extends StatefulWidget {
   final BondResponseDto bondResponseDto;
   const DetailsScreen({super.key, required this.bondResponseDto});
 
   @override
+  State<DetailsScreen> createState() => _DetailsScreenState();
+}
+
+class _DetailsScreenState extends State<DetailsScreen> {
+  bool isMine = false;
+  String role = "";
+  @override
+  void didChangeDependencies(){
+    super.didChangeDependencies();
+    ()async{
+      final userId = await StorageHelper.getUserId();
+      final result = userId == widget.bondResponseDto.userId ? true : false;
+      final currentRole = await StorageHelper.getRole();
+      setState(() {
+        role = currentRole!;
+      });
+      if (currentRole == "Emisor"){
+        Future.microtask(() => Provider.of<BondProvider>(context,listen:false).calculatePaymentPlan(widget.bondResponseDto.id!,0,0,0,0));
+      }
+      setState(() {
+        isMine = result;
+      });
+    }();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final bondProvider = context.watch<BondProvider>();
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: SafeArea(
@@ -59,7 +89,6 @@ class DetailsScreen extends StatelessWidget {
               ),
             ),
 
-            // Bond Details Card
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               padding: const EdgeInsets.all(20),
@@ -77,7 +106,7 @@ class DetailsScreen extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    'Bono del ${bondResponseDto.issuerName ?? "-"}',
+                    'Bono del ${widget.bondResponseDto.issuerName ?? "-"}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
@@ -86,7 +115,7 @@ class DetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    bondResponseDto.username ?? "-",
+                    widget.bondResponseDto.username ?? "-",
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -94,7 +123,7 @@ class DetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Valor nominal: ${bondResponseDto.nominalValue ?? "-"}',
+                    'Valor nominal: ${widget.bondResponseDto.nominalValue ?? "-"}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
@@ -103,7 +132,7 @@ class DetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Fecha de emisión: ${bondResponseDto.issueDate != null ? normalizeDate(bondResponseDto.issueDate!) : "-"}',
+                    'Fecha de emisión: ${widget.bondResponseDto.issueDate != null ? normalizeDate(widget.bondResponseDto.issueDate!) : "-"}',
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 14,
@@ -114,38 +143,6 @@ class DetailsScreen extends StatelessWidget {
             ),
 
             const SizedBox(height: 20),
-            // Botón Editar solo para emisores
-            FutureBuilder<String?>(
-              future: StorageHelper.getRole(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.done && snapshot.data == "Seller") {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4A7C59),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                        ),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => EditBondScreen(bond: bondResponseDto),
-                            ),
-                          );
-                        },
-                        child: const Text('Editar Bono', style: TextStyle(fontSize: 16)),
-                      ),
-                    ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-
             // Details Info
             Expanded(
               child: Container(
@@ -166,35 +163,35 @@ class DetailsScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      _buildDetailRow('Nombre:', 'Bono del ${bondResponseDto.issuerName ?? "-"}'),
+                      _buildDetailRow('Nombre:', 'Bono del ${widget.bondResponseDto.issuerName ?? "-"}'),
                       const SizedBox(height: 12),
-                      _buildDetailRow('Valor nominal:', '${bondResponseDto.nominalValue ?? "-"}'),
+                      _buildDetailRow('Valor nominal:', '${widget.bondResponseDto.nominalValue ?? "-"}'),
                       const SizedBox(height: 12),
-                      _buildDetailRow('Valor comercial:', '${bondResponseDto.commercialValue ?? "-"}'),
+                      _buildDetailRow('Valor comercial:', '${widget.bondResponseDto.commercialValue ?? "-"}'),
                       const SizedBox(height: 12),
-                      _buildDetailRow('Tasa cupón:', '${bondResponseDto.couponRate ?? "-"}'),
+                      _buildDetailRow('Tasa cupón:', '${widget.bondResponseDto.couponRate ?? "-"}'),
                       const SizedBox(height: 12),
-                      _buildDetailRow('Tasa de mercado:', '${bondResponseDto.marketRate ?? "-"}'),
+                      _buildDetailRow('Tasa de mercado:', '${widget.bondResponseDto.marketRate ?? "-"}'),
                       const SizedBox(height: 12),
-                      _buildDetailRow('Fecha de emisión:', bondResponseDto.issueDate != null ? normalizeDate(bondResponseDto.issueDate!) : "-"),
+                      _buildDetailRow('Fecha de emisión:', widget.bondResponseDto.issueDate != null ? normalizeDate(widget.bondResponseDto.issueDate!) : "-"),
                       const SizedBox(height: 12),
-                      _buildDetailRow('N° de operación:', bondResponseDto.id?.toString() ?? "-"),
+                      _buildDetailRow('N° de operación:', widget.bondResponseDto.id?.toString() ?? "-"),
                       const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('TCEA:', bondResponseDto.tcea?.toStringAsFixed(4) ?? "-", 'Tasa de Costo Efectivo Anual (emisor): mide el costo total anual del bono para el emisor.'),
+                      _buildDetailRowWithInfo('TCEA:', bondProvider.paymentPlans.tcea?.toStringAsFixed(4) ?? "-", 'Tasa de Costo Efectivo Anual (emisor): mide el costo total anual del bono para el emisor.'),
                       const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('TREA:', bondResponseDto.trea?.toStringAsFixed(4) ?? "-", 'Tasa de Rendimiento Efectivo Anual (bonista): mide el rendimiento anual real para el inversionista.'),
+                      _buildDetailRowWithInfo('TREA:',bondProvider.paymentPlans.trea?.toStringAsFixed(4) ?? "-", 'Tasa de Rendimiento Efectivo Anual (bonista): mide el rendimiento anual real para el inversionista.'),
                       const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('Duración:', bondResponseDto.duration?.toStringAsFixed(4) ?? "-", 'Duración: mide el plazo promedio ponderado de los flujos de caja del bono.'),
+                      _buildDetailRowWithInfo('Duración:', bondProvider.paymentPlans.duration?.toStringAsFixed(4) ?? "-", 'Duración: mide el plazo promedio ponderado de los flujos de caja del bono.'),
                       const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('Duración Modificada:', bondResponseDto.modifiedDuration?.toStringAsFixed(4) ?? "-", 'Duración modificada: mide la sensibilidad del precio del bono ante cambios en la tasa de interés.'),
+                      _buildDetailRowWithInfo('Duración Modificada:', widget.bondResponseDto.modifiedDuration?.toStringAsFixed(4) ?? "-", 'Duración modificada: mide la sensibilidad del precio del bono ante cambios en la tasa de interés.'),
                       const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('Convexidad:', bondResponseDto.convexity?.toStringAsFixed(4) ?? "-", 'Convexidad: mide la curvatura de la relación precio-tasa de interés del bono.'),
+                      _buildDetailRowWithInfo('Convexidad:', bondProvider.paymentPlans.convexity?.toStringAsFixed(4) ?? "-", 'Convexidad: mide la curvatura de la relación precio-tasa de interés del bono.'),
                       const SizedBox(height: 12),
-                      _buildDetailRowWithInfo('Precio Máximo:', bondResponseDto.maxPrice?.toStringAsFixed(2) ?? "-", 'Precio máximo: precio máximo que el inversionista debería pagar para que el bono sea rentable.'),
+                      _buildDetailRowWithInfo('Precio Máximo:', bondProvider.paymentPlans.maxMarketPrice?.toStringAsFixed(2) ?? "-", 'Precio máximo: precio máximo que el inversionista debería pagar para que el bono sea rentable.'),
                       const SizedBox(height: 20),
 
                       // Cash Flow Table
-                      if (bondResponseDto.cashFlow != null && bondResponseDto.cashFlow!.isNotEmpty)
+                      if (bondProvider.paymentPlans != null && bondProvider.paymentPlans.cashFlows!.isNotEmpty)
                         Container(
                           decoration: BoxDecoration(
                             color: const Color(0xFF4A7C59),
@@ -234,7 +231,7 @@ class DetailsScreen extends StatelessWidget {
                                   ),
                                 ],
                               ),
-                              ...bondResponseDto.cashFlow!.asMap().entries.map((entry) {
+                              ...bondProvider.paymentPlans.cashFlows!.asMap().entries.map((entry) {
                                 final i = entry.key;
                                 final value = entry.value;
                                 return TableRow(
@@ -257,6 +254,28 @@ class DetailsScreen extends StatelessWidget {
                             ],
                           ),
                         ),
+                      role == "Emisor" ? Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF4A7C59),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => EditBondScreen(bond: widget.bondResponseDto),
+                                ),
+                              );
+                            },
+                            child: const Text('Editar Bono', style: TextStyle(fontSize: 16)),
+                          ),
+                        ),
+                      ) : Container(),
                     ],
                   ),
                 ),
@@ -313,8 +332,19 @@ class DetailsScreen extends StatelessWidget {
                   showDialog(
                     context: context,
                     builder: (context) => AlertDialog(
-                      title: Text(label),
-                      content: Text(info),
+                      backgroundColor: background,
+                      title: Text(
+                          label,
+                        style: TextStyle(
+                          color: Colors.black
+                        ),
+                      ),
+                      content: Text(
+                          info,
+                        style: TextStyle(
+                            color: Colors.black
+                        ),
+                      ),
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(context),

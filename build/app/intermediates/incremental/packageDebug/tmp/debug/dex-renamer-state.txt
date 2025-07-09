@@ -1,4 +1,4 @@
-#Fri Jul 04 20:42:02 PET 2025
+#Tue Jul 08 20:59:28 PET 2025
 base.0=/Users/lordmathi2741/Documents/Cursos/Finanzas-Mobile/PhonePlus-Mobile/build/app/intermediates/dex/debug/mergeExtDexDebug/classes.dex
 base.1=/Users/lordmathi2741/Documents/Cursos/Finanzas-Mobile/PhonePlus-Mobile/build/app/intermediates/dex/debug/mergeLibDexDebug/0/classes.dex
 base.2=/Users/lordmathi2741/Documents/Cursos/Finanzas-Mobile/PhonePlus-Mobile/build/app/intermediates/dex/debug/mergeProjectDexDebug/0/classes.dex

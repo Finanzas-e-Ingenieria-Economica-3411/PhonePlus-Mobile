@@ -18,7 +18,6 @@ class HomeScreen extends StatelessWidget {
           LoginScreen(),
         ],
       ),
-      bottomNavigationBar: CustomBottomNavigationBar(),
     );
   }
 }

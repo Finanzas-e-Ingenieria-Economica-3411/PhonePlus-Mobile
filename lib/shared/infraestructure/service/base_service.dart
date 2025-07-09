@@ -50,6 +50,31 @@ abstract class BaseService<TRequest extends Serializable>{
     }
   }
 
+  Future<List<dynamic>> getByParam(String query) async {
+    try {
+      final token = await getToken();
+      Options options = Options(
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+      print(Constant.baseUrl + resourcePath + query);
+      final response = await _dio.get(Constant.baseUrl + resourcePath + query, options: options);
+      final List<dynamic> data = response.data;
+      return data;
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      logger.log(
+        Level.error,
+        'Error while calling GET ${Constant.baseUrl}$resourcePath, status code: $statusCode, message: ${e.message}',
+      );
+      throw Exception('HTTP Error: $statusCode');
+    } catch (e){
+      throw Exception("Unknown exception: $e");
+    }
+  }
+
+
   Future<dynamic> post(TRequest request) async {
     try{
       final token = await getToken();

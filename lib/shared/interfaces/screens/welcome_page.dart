@@ -7,13 +7,16 @@ class WelcomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        "Phone Plus",
-        style: TextStyle(
-          color: background,
-          fontWeight: FontWeight.bold,
-          fontSize: 50
+    return Scaffold(
+      backgroundColor: primary,
+      body: Center(
+        child: Text(
+          "Phone Plus",
+          style: TextStyle(
+            color: background,
+            fontWeight: FontWeight.bold,
+            fontSize: 50
+          ),
         ),
       ),
     );

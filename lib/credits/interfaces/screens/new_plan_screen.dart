@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:phoneplus/credits/domain/bond_request.dto.dart';
 import 'package:phoneplus/credits/interfaces/providers/bond_provider.dart';
+import 'package:phoneplus/shared/interfaces/widgets/custom_bottom_navigation_bar.dart';
 import 'package:phoneplus/shared/interfaces/widgets/custom_button.dart';
 import 'package:phoneplus/shared/interfaces/widgets/custom_dialog.dart';
 import 'package:phoneplus/shared/interfaces/widgets/form_text_field.dart';
@@ -281,6 +282,9 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: background,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 70),
@@ -393,7 +397,7 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: DropdownButtonFormField<int>(
                         value: currencies.any((e) => e['value'] == selectedCurrency) ? selectedCurrency : currencies[0]['value'],
-                        items: currencies.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String))).toList(),
+                        items: currencies.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String, style: TextStyle(color: Colors.black)))).toList(),
                         onChanged: (v) => setState(() => selectedCurrency = v),
                         decoration: const InputDecoration(labelText: 'Moneda'),
                         isExpanded: true,
@@ -403,7 +407,7 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: DropdownButtonFormField<int>(
                         value: capitalizationTypes.any((e) => e['value'] == selectedCapitalizationType) ? selectedCapitalizationType : capitalizationTypes[0]['value'],
-                        items: capitalizationTypes.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String))).toList(),
+                        items: capitalizationTypes.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String,style: TextStyle(color: Colors.black)))).toList(),
                         onChanged: (v) => setState(() => selectedCapitalizationType = v),
                         decoration: const InputDecoration(labelText: 'Capitalización'),
                         isExpanded: true,
@@ -413,7 +417,7 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: DropdownButtonFormField<int>(
                         value: frequencies.any((e) => e['value'] == selectedFrequency) ? selectedFrequency : frequencies[0]['value'],
-                        items: frequencies.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String))).toList(),
+                        items: frequencies.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String, style: TextStyle(color: Colors.black)))).toList(),
                         onChanged: (v) => setState(() => selectedFrequency = v),
                         decoration: const InputDecoration(labelText: 'Frecuencia'),
                         isExpanded: true,
@@ -423,7 +427,7 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: DropdownButtonFormField<int>(
                         value: cuponRateTypes.any((e) => e['value'] == selectedCuponRateType) ? selectedCuponRateType : cuponRateTypes[0]['value'],
-                        items: cuponRateTypes.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String))).toList(),
+                        items: cuponRateTypes.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String, style: TextStyle(color: Colors.black),))).toList(),
                         onChanged: (v) => setState(() => selectedCuponRateType = v),
                         decoration: const InputDecoration(labelText: 'Tipo de Tasa de Cupón'),
                         isExpanded: true,
@@ -433,7 +437,7 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: DropdownButtonFormField<int>(
                         value: frequencies.any((e) => e['value'] == selectedCuponRateFrequency) ? selectedCuponRateFrequency : frequencies[0]['value'],
-                        items: frequencies.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String))).toList(),
+                        items: frequencies.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String, style: TextStyle(color: Colors.black)))).toList(),
                         onChanged: (v) => setState(() => selectedCuponRateFrequency = v),
                         decoration: const InputDecoration(labelText: 'Frecuencia de Cupón'),
                         isExpanded: true,
@@ -443,7 +447,7 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 10.0),
                       child: DropdownButtonFormField<int>(
                         value: capitalizationTypes.any((e) => e['value'] == selectedCuponRateCapitalization) ? selectedCuponRateCapitalization : capitalizationTypes[0]['value'],
-                        items: capitalizationTypes.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String))).toList(),
+                        items: capitalizationTypes.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String, style: TextStyle(color: Colors.black)))).toList(),
                         onChanged: (v) => setState(() => selectedCuponRateCapitalization = v),
                         decoration: const InputDecoration(labelText: 'Capitalización de Cupón'),
                         isExpanded: true,
@@ -465,7 +469,7 @@ class _NewPlanScreenState extends State<NewPlanScreen> {
                           Expanded(
                             child: DropdownButtonFormField<int>(
                               value: graceTypes.any((e) => e['value'] == selectedGraceType) ? selectedGraceType : graceTypes[0]['value'],
-                              items: graceTypes.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String))).toList(),
+                              items: graceTypes.map((e) => DropdownMenuItem<int>(value: e['value'] as int, child: Text(e['label'] as String, style: TextStyle(color: Colors.black)))).toList(),
                               onChanged: (v) => setState(() => selectedGraceType = v),
                               decoration: const InputDecoration(labelText: 'Tipo de gracia'),
                               isExpanded: true,

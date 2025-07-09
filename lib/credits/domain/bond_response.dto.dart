@@ -19,7 +19,6 @@ class BondResponseDto {
   String? state;
   String? issuerName;
   String? username;
-  // Result fields
   double? tcea;
   double? trea;
   double? duration;
@@ -60,32 +59,96 @@ class BondResponseDto {
 
   BondResponseDto.fromJson(Map<String, dynamic> json) {
     id = json['id'];
-    nominalValue = json['nominalValue'];
-    commercialValue = json['commercialValue'];
-    couponRate = json['couponRate'];
-    marketRate = json['marketRate'];
-    periods = json['periods'];
-    currency = json['currency'];
-    rateType = json['rateType'];
-    capitalization = json['capitalization'];
-    structuringFee = json['structuringFee'];
-    placementFee = json['placementFee'];
-    flotationFee = json['flotationFee'];
-    cavaliFee = json['cavaliFee'];
-    redemptionPremium = json['redemptionPremium'];
-    gracePeriods = json['gracePeriods'];
-    issueDate = json['issueDate'];
+    nominalValue = _toDouble(json['nominalValue']);
+    commercialValue = _toDouble(json['comercialValue']);
+    couponRate = _toDouble(json['cuponRate']);
+    marketRate = null;
+
+    periods = json['numberOfYears'];
+
+    currency = _mapCurrency(json['currency']);
+    rateType = _mapRateType(json['cuponRateType']);
+    capitalization = _mapCapitalization(json['capitalizationTypes']);
+
+    structuringFee = _toDouble(json['structurationRate']);
+    placementFee = null; // No viene en JSON
+    flotationFee = _toDouble(json['flotationRate']);
+    cavaliFee = _toDouble(json['cavaliRate']);
+    redemptionPremium = _toDouble(json['primRate']);
+
+    gracePeriods = (json['gracePeriods'] as List).length;
+    issueDate = null; // No viene en JSON
+
     userId = json['userId'];
-    state = json['state'];
-    issuerName = json['issuerName'];
+    state = _mapState(json['state']);
+
+    issuerName = json['clientName'];
     username = json['username'];
-    tcea = json['tcea'];
-    trea = json['trea'];
-    duration = json['duration'];
-    modifiedDuration = json['modifiedDuration'];
-    convexity = json['convexity'];
-    maxPrice = json['maxPrice'];
-    cashFlow = json['cashFlow'];
+
+    tcea = null;
+    trea = null;
+    duration = null;
+    modifiedDuration = null;
+    convexity = null;
+    maxPrice = null;
+    cashFlow = [];
+  }
+
+  static double? _toDouble(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value.toDouble();
+    if (value is double) return value;
+    return double.tryParse(value.toString());
+  }
+
+  static String? _mapCurrency(int? value) {
+    if (value == null) return null;
+    switch (value) {
+      case 1:
+        return 'PEN';
+      case 2:
+        return 'USD';
+      default:
+        return 'UNKNOWN';
+    }
+  }
+
+  static String? _mapRateType(int? value) {
+    if (value == null) return null;
+    switch (value) {
+      case 1:
+        return 'Efectiva';
+      case 2:
+        return 'Nominal';
+      default:
+        return 'UNKNOWN';
+    }
+  }
+
+  static String? _mapCapitalization(int? value) {
+    if (value == null) return null;
+    switch (value) {
+      case 1:
+        return 'Diaria';
+      case 2:
+        return 'Quincenal';
+      case 3:
+        return 'Mensual';
+      case 4:
+        return 'Bimestral';
+      case 5:
+        return 'Trimestral';
+      case 6:
+        return 'Semestral';
+      case 7:
+        return 'Anual';
+      default:
+        return 'UNKNOWN';
+    }
+  }
+
+  static String? _mapState(int? value) {
+    if (value == null) return null;
+    return value == 1 ? 'Activo' : 'Inactivo';
   }
 }
-

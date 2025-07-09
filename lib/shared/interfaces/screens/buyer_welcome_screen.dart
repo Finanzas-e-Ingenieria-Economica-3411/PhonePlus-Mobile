@@ -7,6 +7,7 @@ import '../../../credits/interfaces/screens/bonds_screen.dart';
 import '../../../ui/constants/constant.dart';
 import '../widgets/custom_bottom_navigation_bar.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/custom_drawer.dart';
 
 class BuyerWelcomeScreen extends StatefulWidget {
   const BuyerWelcomeScreen({super.key});
@@ -27,6 +28,7 @@ class _BuyerWelcomeScreenState extends State<BuyerWelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: const CustomDrawer(),
       appBar: AppBar(
         shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
@@ -62,13 +64,6 @@ class _BuyerWelcomeScreenState extends State<BuyerWelcomeScreen> {
           spacing: 25,
           children: [
             Image.asset("assets/d6d7fb08-90b3-49a0-9b4a-c6cbd10b5245.jpeg"),
-            CustomButton(
-                label: "Ver",
-                onPressed: (){
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => BondsScreen()));
-                },
-                isStrong: true
-            )
           ],
         ),
       ),

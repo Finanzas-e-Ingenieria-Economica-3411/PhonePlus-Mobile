@@ -59,8 +59,9 @@ class MyApp extends StatelessWidget {
   Future<Widget> _determineHomeScreen() async {
     String? token = await StorageHelper.getToken();
     String? role = await StorageHelper.getRole();
+    print(role);
     if (token?.isNotEmpty ?? false) {
-      if (role == "Buyer") {
+      if (role == "Inversionista") {
         return const BuyerWelcomeScreen();
       } else {
         return const SellerWelcomeScreen();

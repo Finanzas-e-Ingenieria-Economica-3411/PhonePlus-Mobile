@@ -3,6 +3,7 @@ import 'package:phoneplus/core/helpers/date_time_helper.dart';
 import 'package:phoneplus/credits/interfaces/providers/bond_provider.dart';
 import 'package:phoneplus/credits/domain/bond_response.dto.dart';
 import 'package:phoneplus/credits/interfaces/screens/details_screen.dart';
+import 'package:phoneplus/shared/infraestructure/helpers/storage_helper.dart';
 import 'package:provider/provider.dart';
 
 class BondsScreen extends StatefulWidget {
@@ -14,17 +15,31 @@ class BondsScreen extends StatefulWidget {
 
 class _BondsScreenState extends State<BondsScreen> {
   int? selectedBondIndex;
+  String role = "";
 
   @override
-  void initState() {
-    super.initState();
-    Future.microtask(() => Provider.of<BondProvider>(context, listen: false).getAvailableBonds());
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    ()async{
+      final currentRole = await StorageHelper.getRole();
+      setState(() {
+        role = currentRole!;
+      });
+    }();
+    if (role == "Inversionista"){
+      Future.microtask(() => Provider.of<BondProvider>(context, listen: false).getAvailableBonds());
+    } else{
+      Future.microtask(() => Provider.of<BondProvider>(context, listen: false).getMyBonds());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final bondProvider = context.watch<BondProvider>();
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor:Colors.grey[100] ,
+      ),
       backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: Column(
